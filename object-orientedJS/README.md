@@ -1,0 +1,2 @@
+此内容为学习Stoyan Stefanov的Object-Oriented JavaScript
+（JavaScript 面向对象编程指南）过程中的杂记。仅作复习参考用
