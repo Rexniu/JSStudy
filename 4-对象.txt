@@ -1,0 +1,768 @@
+@访问对象属性
+>>> var hero = {      breed: 'Turtle',      occupation: 'Ninja'  };
+
+undefined
+>>> hero['occupation']
+"Ninja"
+>>> hero.occupation
+"Ninja"
+
+
+
+
+
+>>> var book = {      home: 'Catch-22',      published: 1961,      author:{          firstname: 'Chris',          lastname: 'Rock'      }  };
+
+undefined
+>>> book.author.firstname
+"Chris"
+>>> book.author['firstname']
+"Chris"
+>>> book['author']['firstname']
+"Chris"
+>>> book['author'].firstname
+"Chris"
+
+//或者如此访问，但只能用中括号了
+>>> var key = "firstname"
+undefined
+>>> book.author[key]
+"Chris"
+
+//JavaScript允许随时对现存对象的属性和方法进行修改。
+
+@this
+var hero = {
+    name: 'James',
+    sayName: function(){
+        return this.name;
+    }
+}
+
+>>> hero.sayName();
+"James"
+
+@全局对象
+程序所在的宿主环境一般都会为其提供一个全局对象，而所谓的全局变量其实都只
+不过是该对象的属性罢了。
+例如当程序的宿主环境是Web浏览器时，她所提供的全局对象就是windows了。
+
+>>> function Hero(name) {this.name = name;}
+undefined
+>>> var h = Hero('Leonardo');
+undefined
+>>> typeof h
+"undefined"
+>>> typeof h.name
+TypeError: h is undefined
+>>> name
+"Leonardo"
+>>> window.name  //由于在Hero中使用了this，所以就会创建一个全局变量（也是全局对象的一个属性）
+"Leonardo"
+
+//使用new来调用相同的构造函数，会创建一个新对象
+
+
+@构造器函数
+function Hero(name) {
+    this.name = name;
+    this.occupation = 'Ninja';
+    this.whoAreYou = function() {
+        return "I'm "+this.name+" and I'm a "+this.occupation;
+    }
+}
+
+
+>>> function Hero(name) {      this.name = name;      this.occupation = 'Ninja';      this.whoAreYou = function() {          return "I'm"+this.name+" and I'm a "+this.occupation;      }  }
+
+undefined
+>>> var h1 = new Hero('Michelangelo');
+undefined
+>>> var h2 = new Hero('Jack');
+undefined
+>>> h1.whoAreYou();
+"I'mMichelangelo and I'm a Ninja"
+>>> h2.whoAreYou();
+"I'mJack and I'm a Ninja"
+
+>>> var h = Hero('Jack');   //如果没有加new
+undefined
+>>> typeof h
+"undefined"
+
+//使用new来调用相同的构造函数，就会创建一个新对象，并且this也会自动指向该对象
+>>> var h2 = new Hero('Michelangelo');
+undefined
+>>> typeof h2
+"object"
+>>> h2.name
+"Michelangelo"
+//parseInt等在第三章介绍的内部函数都可以当做window对象方法来调用
+>>> parseInt('12lji');
+12
+>>> window.parseInt('123slkjf');
+123
+
+@instanceof操作符
+通过instanceof操作符，可以测试一个对象是不是由某个指定的构造器函数所创建的。
+>>> function Hero(){};
+undefined
+>>> var h = new Hero();
+undefined
+>>> var o = {};
+undefined
+>>> h instanceof Hero;
+true
+>>> h instanceof Object;
+true
+>>> o instanceof Object;
+true
+
+@返回对象的函数
+>>> function C2() {this.a=1;return {b:2};} //return返回的是{b:2}，一个对象
+undefined
+>>> var c2 = new C2();
+undefined
+>>> typeof c2.a
+"undefined"
+>>> c2.b
+2
+
+//当我们copy某个对象或者将它传递给某个函数时，往往传递的都是该对象的引用。因此
+//我们在引用上所做的任何改动，实际上该都会影响特所引用原对象。
+>>> var original = {howmany:1};
+undefined
+>>> var copy = original;
+undefined
+>>> copy.howmany 
+1
+>>> copy.howmany =100 
+100
+>>> original.howmany
+100
+
+@对象比较
+对象比较：当且仅当连个引用指向同一个对象时为true。
+>>> var fido = {breed: 'dog'};
+undefined
+>>> var benji = {breed: 'dog'};
+undefined
+>>> benji === fido
+false
+>>> benji == fido
+false
+
+@Firebug控制台中的对象
+
+
+无论是多复杂的对象，他都是继承自Object对象的，并且拥有所有的方法（例如tostring）和属相（例如构造器）。
+
+@值得关注的数组方法
+sort()、join()、slice()等。
+push:在数组的末端添加一个新元素
+pop:移除数组最后一个元素
+
+>>> var a = [3,5,1,7,'test'];
+undefined
+>>> a.push('new');
+6
+>>> a
+[3, 5, 1, 7, "test", "new"]
+>>> a.pop()
+"new"
+>>> a
+[3, 5, 1, 7, "test"]
+
+//给数组排序，返回修改后的数组。
+>>> var b = a.sort();
+undefined
+>>> b
+[1, 3, 5, 7, "test"]
+>>> a
+[1, 3, 5, 7, "test"]
+
+//join()方法会返回一个由目标数组中所有元素链接而成的字符串。
+>>> a.join(' is not ')
+"1 is not 3 is not 5 is not 7 is not test"
+
+//slice会在不修改目标数组的情况下返回其中的某个片段。
+>>> b = a.slice(1,3);
+[3, 5]
+>>> b = a.slice(0,1);
+[1]
+>>> b = a.slice(0,2);
+[1, 3]
+>>> a
+[1, 3, 5, 7, "test"]
+
+//splice（）则是会修改目标数组的。它会移除并返回指定切片。还会
+//用指定的新元素来填补被切除的空缺。
+>>> b = a.splice(1,2,100,101,102)
+[3, 5]
+>>> a
+[1, 100, 101, 102, 7, "test"]
+
+@Function
+
+>>> var first = new Function('a,b,c,d','return arguments');
+undefined
+>>> first(1,2,3,4);
+[1, 2, 3, 4]
+>>> var second = new Function('a,b,c,d','return arguments');
+undefined
+>>> second(1,2,3,4);
+[1, 2, 3, 4]
+
+!!!尽量避免使用Function()构造器。
+
+@Function对象的属性
+
+>>> function myfunc(a) {return a;}
+undefined
+>>> myfunc.constructor    //constructor
+Function()
+>>> function myfunc(a,b,c){return true;}
+undefined
+>>> myfunc.length
+3
+>>> function A(){return A.caller;}  //caller会返回一个调用该函数对象的外层函数引用。
+undefined
+>>> function B(){return A();}
+undefined
+>>> B();
+B()
+>>> A()
+null
+
+prototype属性
+var some_obj = {
+    name: 'Ninja',
+    say: function(){
+        return 'I am a ' + this.name;
+    }
+}
+
+
+>>> function F(){}
+undefined
+>>> typeof F.prototype  //此时prototype的属性是一个空对象
+"object"
+>>> F.prototype = some_obj;  //把some_obj赋给prototype
+Object { name="Ninja", say=function()}
+>>> var obj = new F();
+undefined
+>>> obj.name
+"Ninja"
+>>> obj.say
+function()
+>>> obj.say()
+"I am a Ninja"
+
+@Function对象的方法
+对一个函数调用toString()方法时，所得到的就是该函数的源代码。
+>>> function myfunc(a,b,c) {return a+b+c;}
+undefined
+>>> myfunc.toString()
+"function myfunc(a,b,c) {return a+b+c;}"
+
+//函数对象的两个常用方法：call()和apply();
+var some_obj = {
+    name: 'Ninja',
+    say: function(who){
+        return 'Haya '+who+',I am a '+this.name;
+    }
+}
+>>> some_obj.say('Dude');
+"Haya Dude,I am a Ninja"
+
+>>> my_obj = {name: 'Scripting guru'};
+Object { name="Scripting guru"}
+
+//my_obj也适用于some_obj的say()方法
+>>> some_obj.say.call(my_obj,'Dude');
+"Haya Dude,I am a Scripting guru"
+//apply()的工作方式和call()基本相同，唯一的不同在于参数的传递形式，
+//这里目标函数所需要的参数都是通过一个数组来传递的。
+>>> some_obj.say.apply(my_obj,['Dude']);
+"Haya Dude,I am a Scripting guru"
+
+@重识arguments对象
+arguments的callee属性：该属性引用的是当前被调用的函数对象。即如果所
+建函数的返回值是arguments.callee,那么该函数在被调用时就会返回自身的引用。
+
+arguments.callee实现匿名函数的递归调用：
+(
+    function(count){
+        if(count < 5){
+            alert(count);
+            arguments.callee(++count);
+        }
+    }
+)(1)
+“弹5次窗”
+
+@Boolean
+>>> var b = new Boolean(); //new Boolean（）；构建的是对象
+undefined
+>>> typeof b
+"object"
+>>> typeof b.valueOf()
+"boolean"
+>>> b.valueOf()
+false
+>>> Boolean('test');   //将非布尔值转化为布尔值
+true
+>>> Boolean('');
+false
+>>> Boolean({});     //look here!!
+true
+
+//创建两个布尔对象
+>>> var b1 = new Boolean(true)
+undefined
+>>> b1.valueOf()
+true
+>>> var b2=new Boolean(false)
+undefined
+>>> b2.valueOf()
+false
+>>> Boolean(b1)
+true
+>>> Boolean(b2) //所有对象都属于truthy值
+true
+
+@Number
+>>> var n = Number('12.12')
+undefined
+>>> n
+12.12
+>>> typeof n
+"number"
+>>> var n = new Number('12.12');
+undefined
+>>> typeof n
+"object"
+
+//不可更改的内置属性
+>>> Number.MAX_VALUE
+1.7976931348623157e+308
+>>> Number.MIN_VALUE
+5e-324
+>>> Number.POSITIVE_INFINITY
+Infinity
+>>> Number.NEGATIVE_INFINITY
+-Infinity
+>>> Number.NaN
+NaN
+
+Number()的三个方法:toFixed()、toPrecision()、toExponential()
+>>> n.toFixed(1)
+"123.5"
+
+>>> (12345).toExponential()
+"1.2345e+4"
+
+//进制转换
+>>> var n = new Number(255);
+undefined
+>>> n.toString();
+"255"
+>>> n.toString(10)
+"255"
+>>> n.toString(16)
+"ff"
+>>> (3).toString(2)
+"11"
+>>> (3).toString(10)
+
+@String
+
+>>> var primitive = 'Hello';
+undefined
+>>> typeof primitive;
+"string"
+>>> var obj = new String('world');
+undefined
+>>> typeof obj
+"object"
+>>> typeof obj.valueOf();
+"string"
+
+>>> obj[0]
+"w"
+>>> obj[4]
+"d"
+>>> obj.length
+5
+
+>>> obj.valueOf();
+"world"
+>>> obj.toString();
+"world"
+
+//把一个基本字符当做对象来使用。
+>>> "potato".length
+6
+>>> "tomato"[0]
+"t"
+>>> "potato"["potato".length - 1]
+"o"
+
+>>> Boolean('')
+false
+>>> Boolean(new String(''))
+true
+
+//与Number()类似
+>>> String(1)
+"1"
+>>> String({p:1})
+"[object Object]"
+>>> String([1,2,3])
+"1,2,3"
+@String对象中值得关注的方法
+
+>>> var s = new String("Couch potato")
+undefined
+>>> s.toUpperCase()  //转化为大写的
+"COUCH POTATO"
+>>> s.toLowerCase()  //转化为小写
+"couch potato"
+>>> s.charAt(0);  //charAt()返回我么指定位置的字符，
+"C"
+>>> s[0]
+"C"
+>>> s.charAt(124);  //位置不存在时，返回空字符串
+""
+>>> s.indexOf('o')  //indexOf()实现字符串内部搜索
+1
+>>> s.indexOf('o',2)  //指定从索引2出开始
+7
+>>> s.lastIndexOf('o')  //从字符串的末端开始搜索
+11
+>>> s.indexOf('couch')  //字符串中搜索字符串，若没有返回"-1"
+-1
+>>> s.toLowerCase().indexOf('couch');  //进行大小写无关的搜索
+0
+//Watch here!!上面返回“0”，说明‘couch’从字符串‘0’位置开始，
+实际上couch是存在的， 如果用 
+	if(s.indexOf('Couch')) {...}
+可能造成混淆。所以正确的做法是：
+	if( s.indexOf('Couch') !== -1) {...}
+
+slice()和substring();  //这两个函数的第二个参数指定的都是区间的末端
+位置，而不是该区间的长度
+>>> s.slice(1,5)
+"ouch"
+>>> s.substring(1,5)
+"ouch"
+//对负值的处理：substring()方法会将其视为从0开始的技术形式，
+而slice（）方法则会将它与字符串的长对相加。 如果是（1，-1）那么则
+分别相当于：substring(1,0)和slice(1,s.length-1);
+如果是（2，-1），分别相当于：substring(2,0)和slice(2,s.length-1);
+>>> s.slice(1,-1);
+"ouch potat"
+>>> s.substring(1,-1);
+"C"
+>>> s.slice(2,-1);
+"uch potat"
+>>> s.substring(2,-1);
+"Co"
+
+split()方法：根据传递的参数分割字符串；可视为join()的反操作。
+>>> s.split(" ")
+["Couch", "potato"]
+>>> s.split(" ").join(" ");
+"Couch potato"
+
+concat（）方法用于追加字符串
+>>> s.concat("es")
+"Couch potatoes"
+
+！！！注意：以上所讨论的方法返回的 都是一个新的基本字符串，不会修改
+源字符。
+
+@Math
+>>> Math.PI    //数字PI
+3.141592653589793
+>>> Math.SQRT2  //2的平方根
+1.4142135623730951
+>>> Math.E     //e
+2.718281828459045
+>>> Math.LN2    //2的自然对数
+0.6931471805599453
+>>> Math.LN10	//10的自然对数
+2.302585092994046
+>>> Math.random()  //生成随机数，返回的是0到1之间的某个数。
+0.15525346584104605
+
+floor():舍弃；ceil():入位 round():四舍五入
+
+
+>>> Math.pow(2,8)   //2的8次方
+256
+>>> Math.sqrt(9)    //9的平方根
+3
+
+@Date
+>>> new Date()  //表示当天日期和时间
+Date {Sun Nov 10 2013 08:11:06 GMT+0800 (China Standard Time)}
+
+//注意一下几种字符串初始化Date对象的示例。注意不同的格式
+>>> new Date('2009 11 12')  
+Date {Thu Nov 12 2009 00:00:00 GMT+0800 (China Standard Time)}
+>>> new Date('1 1 2012')
+Date {Sun Jan 01 2012 00:00:00 GMT+0800 (China Standard Time)}
+>>> new Date('1 mar 2012 5:30')
+Date {Thu Mar 01 2012 05:30:00 GMT+0800 (China Standard Time)}
+
+//年份；月份（从0-11，LOOK!!），日期，时数，分钟，秒钟，毫秒数（0-999）。
+>>> new Date(2008,0,1,17,05,03,120)
+Date {Tue Jan 01 2008 17:05:03 GMT+0800 (China Standard Time)}
+>>> new Date(2008,0,1,17)  //只传递日期的结果
+Date {Tue Jan 01 2008 17:00:00 GMT+0800 (China Standard Time)}
+
+>>> new Date(2008,1,28)     //注意：“1”是2月
+Date {Thu Feb 28 2008 00:00:00 GMT+0800 (China Standard Time)}
+
+>>> new Date(2008,1,29)
+Date {Fri Feb 29 2008 00:00:00 GMT+0800 (China Standard Time)}
+>>> new Date(2008,1,30)   //值超过了范围，自动解释为3月1号
+Date {Sat Mar 01 2008 00:00:00 GMT+0800 (China Standard Time)}
+
+>>> new Date(2008,11,31)
+Date {Wed Dec 31 2008 00:00:00 GMT+0800 (China Standard Time)}
+>>> new Date(2008,11,32)   //11月32日，自动解释为12月1号
+Date {Thu Jan 01 2009 00:00:00 GMT+0800 (China Standard Time)}
+>>> new Date(1199865795109)
+Date {Wed Jan 09 2008 16:03:15 GMT+0800 (China Standard Time)}
+
+//如果没有使用new操作符，那么无论有没有传递参数，都只显示当前的日期时间。
+>>> Date()
+"Sun Nov 10 2013 08:16:03 GMT+0800 (China Standard Time)"
+>>> Date(1,2,3,"it doesn't matter")
+"Sun Nov 10 2013 08:16:25 GMT+0800 (China Standard Time)"
+
+Date对象工作方式（get*()和set*()）
+
+
+>>> var d = new Date();
+undefined
+>>> d.toString();
+"Sun Nov 10 2013 16:22:45 GMT+0800 (China Standard Time)"
+
+>>> d.setMonth(2);  //将d的月份设置成3月。
+1362903765577
+>>> d.toString();
+"Sun Mar 10 2013 16:22:45 GMT+0800 (China Standard Time)"
+
+>>> d.getMonth();  //获取月份数。
+2
+>>> Date.parse('Jan 1,2008');  //Date.parse()会将其所接受的字符串转换成相应的timestamp格式。
+1199116800000
+
+>>> Date.UTC(2008,0,1)   //Date.UTC方法可以产生一个相应、符合格林尼治时间标准的timestamp值。
+1199145600000
+
+>>> new Date(Date.UTC(2008,0,1)); //将UTC()返回的格林尼治时间转换为本地时间
+Date {Tue Jan 01 2008 08:00:00 GMT+0800 (China Standard Time)}
+>>> new Date(2008,0,1)
+Date {Tue Jan 01 2008 00:00:00 GMT+0800 (China Standard Time)}
+>>> var d = new Date(2012,5,20)
+undefined
+>>> d.getDay(); //想知道某天是周几。（周几是从0开始，0是周日）so,3 is Wendnesday
+3
+>>> d.toDateString();
+"Wed Jun 20 2012"
+
+//统计2012年到3012年有多少个周五  ！！！仔细看下
+var stats = [0,0,0,0,0,0,0];
+for (var i = 2012;i < 3012; i++){
+    stats[new Date(i,5,20).getDay()]++;
+}
+>>> stats;
+[139, 145, 139, 146, 143, 143, 145]
+
+@RegExp   正则表达式；regular expression 缩写成regex或者regexp
+
+>>> var re = new RegExp("j.*t");
+
+>>> var re = /j.*t/;   //j.*t 即为正则表达式模式；具体含义是：“匹配任何
+以j开头、t结尾的字符串，且这两个字符串之间可以包含1个或多个字符。”“*”的
+意思就是“0个或多个单元”，“.”表示的是“任意字符”。
+
+
+一个正则表达式对象所拥有的属性：
+global:默认值是false，此时相关搜索会在找到第一个匹配位置时停止。如果要找到所有位置，须将其设置为true。
+ignoreCase:设置大小相关性，默认为false。
+multiline：设置是否跨行搜索的选项，默认为false。
+lastIndex：搜索开始的索引位，默认值为：0
+source：用于存储正则表达式匹配模式的属性。
+
+g代表global，i代表了ignoreCase，m代表了multiline；
+>>> var re = new RegExp('j.*t','gmi');
+undefined
+>>> re.global;
+true
+>>> re.global = false;  //修饰符一旦被设置了就不能更改了。如下：
+false
+>>> re.global;   //看吧，就是改不了吧。^_^
+true
+ 
+//通过文本方式来设置这种regex的修饰符。
+>>> var  re = /j.*t/ig;
+>>> re.global
+true
+
+@RegExp对象的方法
+RegExp对象中可用于查找匹配内容的方法：test()和exec()。
+test()返回的是一个布尔值。exec()返回的则是一个有匹配字符串组成的数组。
+
+//因为目标是大写的“J”，所以为false。
+>>> /j.*t/.test("Javascript")
+false
+>>> /j.*t/i.test("Javascript")  //改为忽略小写后变为true
+true
+>>> /j.*t/i.exec("Javascript")[0]  //exec()方法
+"Javascript"
+
+
+@以正则表达式为参数的字符串方法
+String对象以正则表达式对象为参数的方法主要有：
+match()、search（）、repalce（）、split（）
+@search()与match（）
+>>> var s = new String('HelloJavaScriptWorld');
+undefined
+>>> s.match(/a/);  //调用match()方法
+["a"]
+>>> s.match(/a/g);  //进行global搜索
+["a", "a"]
+>>> s.match(/j.*a/i);   //进行大小写无关的匹配操作
+["Java"]
+>>> s.search(/j.*a/i);  //search()方法会返回匹配字符串的索引位置
+5
+
+@replace()  :可以将相关的匹配文本替换成某些其他字符串。
+
+>>> var s = new String('HelloJavaScriptWorld');
+>>> s.replace(/[A-Z]/g,'');  //移除目标字符串中的所有大写字母
+"elloavacriptorld"
+>>> s.replace(/[A-Z]/,'');     //去掉g只有第一个被替换。
+"elloJavaScriptWorld"
+>>> s.replace(/[A-Z]/,'_$&');  //使用“$&”修饰符，为匹配项加"_"
+"_HelloJavaScriptWorld"
+>>> s.replace(/[A-Z]/g,'_$&');
+"_Hello_Java_Script_World"
+
+
+>>> var email = "stouan@phpied.com";
+undefined
+>>> var username = email.replace(/(.*)@.*/,"$1");  //分离出Email的前半部分
+undefined
+>>> username;
+"stouan"
+
+@回调式替换   (!!!不太懂)
+>>> function replaceCallback(match){return "_"+match.toLowerCase();}
+undefined
+>>> s.replace(/[A-Z]/g,replaceCallback);
+"_hello_java_script_world"
+
+>>> var glob;
+undefined
+>>> var re = /(.*)@(.*)\.(.*)/;
+var callback = function(){
+    glop = arguments;
+    return arguments[1] + 'at' + arguments[2]+'dot'+
+            arguments[3];
+}
+>>> "stoyan@phpied.com".replace(re,callback);
+"stoyan at phpied dot com"
+>>> glob
+["stoyan@phpied.com", "stoyan", "phpied", "com", 0, "stoyan@phpied.com"]
+
+
+@split()
+根据指定的分割字符串将我们的输入字符串分割成一个数组。
+>>> var csv = 'one, two,three,four';  
+undefined
+>>> csv.split(',');    //用逗号将字符串分割
+["one", " two", "three", "four"]
+>>> csv.split(/\s*,\s*/)   //“\s*”修饰符，“匹配0个过多个空格”
+["one", "two", "three", "four"]
+
+@用字符串来代替过于简单的regexp对象
+
+//以下两种是等价的。
+>>> "test".replace('t','r')
+"rest"
+>>> "test".replace(new RegExp('t'),'r')
+"rest"
+
+
+@Error对象
+程序中出现错误时就会抛出一个Error对象。该对象可能有以下几个内建构造器中的一个
+产生。包括：EvalError、RangeError、Referenceerror、SyntaxError、TypeError和URIError等。
+，都继承制Error对象。
+
+try{
+    iDontExits();
+}catch(e){
+    //do nothing
+}
+
+//以下运行结果，弹出两个警告框
+try{
+    iDontExits();
+}catch(e){
+    alert(e.name + ': ' + e.message);
+}finally {
+    alert('Finally');
+}
+
+//
+try{
+    var total = maybeExists();
+    if(total === 0) {
+        throw new Error('Division by zero!');
+    }else {
+        alert(50/total);
+    }
+}catch(e){
+    alert(e.name + ': '+e.message);
+}finally{
+    alert('Finally!');
+}
+
+
+@4.4练习题
+
+1.(????) 
+function F(){
+     function C(){
+     return this;
+      }      
+     return C();
+}
+var o =new F();
+
+2.
+function C(){
+    this.a = 1;
+    return false;
+}
+console.log(typeof new C());
+
+结果：object   （Why not function）
+
+3.
+>>> c = [1,2,[1,2]];
+[1, 2, [1, 2]]
+>>> c.sort();
+[1, [1, 2], 2]
+>>> c.join('--');  //??????
+"1--1,2--2"
+>>> c.join('-');
+"1-1,2-2"
+>>> console.log(c);
+[1, [1, 2], 2]
