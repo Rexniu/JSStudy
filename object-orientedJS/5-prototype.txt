@@ -212,9 +212,70 @@ String.prototype.reverse = function() {
 "nayotS"
 
 
+//如果想要通过原型为某个对象添加一个新属性，务必先检查一下该属性是否已经存在
+//比如上一个示例应该这样写
+if(!String.prototype.reverse){
+    String.prototype.reverse = function() {
+        return Array.prototype.reverse.apply(this.split('')).join('');
+    }
+}
 
 
+//处理原型问题是需要注意：
+//1.当我们对原型对象执行完全替换时，可能会触发原型链中某种异常（exception）
+//2.prototype.constructor属性是不可靠的。 
 
+>>> function Dog() {this.tail = true;}
+undefined
+>>> var benji =  new Dog();
+undefined
+>>> var rusty = new Dog();
+undefined
 
+>>> Dog.prototype.say = function(){return 'Woof!';}  //加一个say()方法
+function()
 
+>>> benji.say();   //新建的两个对象就可以访问say了
+"Woof!"
+>>> rusty.say();
+"Woof!"
+>>> benji.constructor;   
+Dog()
+>>> rusty.constructor;
+Dog()
+>>> benji.constructor.prototype.constructor  //benji原型对象的构造器应该是Object()，而不应返回Dog();
+Dog()
+>>> typeof benji.constructor.prototype.tail
+"undefined"
+>>> Dog.prototype = {paws:4,hair:true};   //此时用一个自定义的新对象完全覆盖掉原有的原型对象
+Object { paws=4, hair=true}
+>>> typeof benji.paws
+"undefined"
+>>> benji.say()   //覆盖以后，原有对象benji不能访问原型的新增属性，但他们依然能通过神秘链接与原有的原型对象保持联系。
+"Woof!"
+>>> typeof benji.__proto__.say
+"function"
+>>> typeof benji.__proto__.paws
+"undefined"
+>>> var lucy = new Dog();  //再新建对象lucy使用的是被更新后的prototype
+undefined
+>>> lucy.paws
+4
+>>> typeof lucy.__proto__.say //秘密链接_proto_也指向了新的prototype对象
+"undefined"
+>>> typeof lucy.__proto__.paws
+"number"
+>>> lucy.constructor   //这时新对象的constructor属性就不能再保持正确了，原本该是Dog()的应用却指向了Object()。
+Object()
+>>> benji.constructor
+Dog()
+>>> typeof lucy.constructor.prototype.paws  //查看其构造器的prototype属性时，又出现奇迹了！！！
+"undefined"
+>>> typeof benji.constructor.prototype.paws
+"number"
+>>> Dog.prototype = {paws:4,hair:true}    //解决上面异常的方法
+Object { paws=4, hair=true}
+>>> Dog.prototype.constructor = Dog;
+Dog()
 
+//！！！所以，重写某对象的prototype是，最好也重置相应的constructor
