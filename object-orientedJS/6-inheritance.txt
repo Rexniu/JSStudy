@@ -1,0 +1,275 @@
+第6章 继承
+@原型链
+//定义三个构造器函数
+function Shape(){
+    this.name = 'shape';
+    this.toString = function() { return this.name; }
+}
+function TwoDShape(){
+    this.name = '2D shape';
+}
+function Triangle(side,height){
+    this.name = 'Triangle';
+    this.side = side;
+    this.height = height;
+    this.getArea = function(){ return this.side * this.height/2;};
+}
+>>> TwoDShape.prototype = new Shape();
+Shape { name="shape", toString=function()}
+>>> Triangle.prototype = new TwoDShape();
+Shape { name="2D shape", toString=function()}
+
+>>> TwoDShape.prototype.constructor = TwoDShape;  //完成相关的继承关系设定后，对这些对象的constructor属性进行相应的重置。
+TwoDShape()
+>>> Triangle.prototype.constructor = Triangle;
+Triangle(side,height)
+
+>>> var my = new Triangle(5,10);  //新建一个Triangle对象my
+undefined
+>>> my.getArea();
+25
+>>> my.toString();   //先遍历my对象中的所有属性，没有toString(),然后再查my._proto_所指的对象，即由new TwoShape（）所创建的实体。TwoDShape实体中任然没有toString（）方法，然后继续检查该实体的_proto_属性，即由new Shape（）所创建的。终于找到了toString（）方法
+"Triangle"
+>>> my.constructor    //因为之前设置过Triangle.prototype.constructor = Triangle;所以。。
+Triangle(side,height)
+
+>>> my instanceof Shape   //用instanceof验证my对象是否是上述三个构造器的实例。
+true
+>>> my instanceof TwoDShape
+true
+>>> my instanceof Triangle
+true
+>>> my instanceof Array
+false
+//也可以调用这些构造器原型的isPropertypeOf()方法
+>>> Shape.prototype.isPrototypeOf(my)
+true
+>>> TwoDShape.prototype.isPrototypeOf(my)
+true
+>>> Triangle.prototype.isPrototypeOf(my)
+true
+>>> Array.prototype.isPrototypeOf(my)
+false
+>>> String.prototype.isPrototypeOf(my)
+false
+
+>>> var td = new TwoDShape();  //用TwoDShape()所创建的对象也可以获得继承自Shape（）的toString（）方法。
+undefined
+>>> td.constructor
+TwoDShape()
+>>> td.toString
+function()
+>>> var s = new Shape()   //用Shape（）创建的对象。
+undefined
+>>> s.constructor;
+Shape()
+
+@将共享属性迁移到原型中
+//使用某一个构造器创建对象时，其属性被添加到this中去。这会使某些不能通过实体改变的属性出现一些效率低下的情况。
+//所以我们可以选择奖属性添加到所有实体所共享的原型对象中去。
+//Shape()和TwoDShape（）
+
+>>> function Shape (){}
+undefined
+>>> Shape.prototype.name = 'Shape';
+"Shape"
+>>> Shape.prototype.toString = function(){ return this.name};
+function()
+>>> function TwoDShape(){}
+undefined
+>>> TwoDShape.prototype = new Shape();
+Shape { name="Shape", toString=function()}
+>>> TwoDShape.constructor = TwoDShape;
+TwoDShape()
+>>> TwoDShape.prototype.name = '2D shape';
+"2D shape"
+
+//Triangle的
+function Triangle(side,height){
+    this.side = side;
+    this.height = height;
+}
+Triangle.prototype = new TwoDShape();
+Triangle.prototype.constructor = Triangle;
+Triangle.prototype.name = 'Triangle';
+Triangle.prototype.getArea = function(){ return this.side*this.height/2;}
+
+>>> var my = new Triangle(5,10);  //效果和前面的一样
+undefined
+>>> my.getArea();
+25
+>>> my.toString()
+"Triangle"
+
+>>> my.hasOwnProperty('side')   //通过hasOwnProperty()来明确对象自身与其原型链属性的区别。
+true
+>>> my.hasOwnProperty('name')
+false
+>>> TwoDShape.prototype.isPrototypeOf(my)   //isPrototype方法和instanceof操作符的工作方式还一样。
+true
+>>> my instanceof Shape
+true
+
+@只继承于原型
+//1.不要单独为继承关系创建新对象。
+//2.尽量减少运行时方法搜索，例如toString()。
+
+function Shape(){}
+//augment prototype
+Shape.prototype.name = 'shape';
+Shape.prototype.toString = function(){return this.name};
+
+function TwoDShape(){}
+TwoDShape.prototype = Shape.prototype;   //look！！！
+TwoDShape.prototype.constructor = TwoDShape;
+//augment prototype
+TwoDShape.prototype.name = '2D shape';
+
+function Triangle(side,height){
+    this.side = side;
+    this.height = height;
+}
+
+//take care of inheritance
+Triangle.prototype = TwoDShape.prototype;  //look！！！
+Triangle.prototype.constructor = Triangle;
+//argument prototype
+Triangle.prototype.name = 'Triangle';
+Triangle.prototype.getArea = function(){ return this.side * this.height/2;}
+
+>>> var my = new Triangle(5,19);
+undefined
+>>> my.getArea()
+47.5
+>>> my.toString()
+"Triangle"
+
+//上面的列子查询步骤由三步或四步直接被精简成两步。
+//副作用：一单子对象对其原型进行了修改，父对象也会随机被改变，甚至所有的继承关系也是如此。
+//比如：
+>>> Triangle.prototype.name = 'Triangle';
+"Triangle"
+>>> var s = new Shape(); 
+undefined
+>>> s.name
+"Triangle"
+
+@临时构造器--new F()
+//由上可得如果所有属性都指向了一个相同的对象，父对象就会受到兑现属性的影响。
+//这样我们可以创建一个空函数F()，将其原型设置为维基构造器，然后用 new F()来
+//创建一些不包含父对象属性的对象，同时又可以从父对象prototype属性中继承一切了。
+
+function Shape(){}
+//augment prototype
+Shape.prototype.name = 'shape';
+Shape.prototype.toString = function(){ return this.name;};
+
+function TwoDShape (){}
+//take care of inheritance
+var F = function(){};
+F.prototype = Shape.prototype;
+TwoDShape.prototype = new F();
+TwoDShape.prototype.constructor = TwoDShape;
+//argument prototype
+TwoDShape.prototype.name = '2D shape';
+
+function Triangle(side,height){
+    this.side = side;
+    this.height = height;
+}
+//take care of inheritance 
+var F = function(){}
+F.prototype = TwoDShape.prototype;
+Triangle.prototype = new F();
+Triangle.prototype.constructor = Triangle;
+//augment prototype
+Triangle.prototype.name = 'Triangle';
+Triangle.prototype.getArea = function(){return this.side*this.height/2;};
+
+//结果测试
+>>> var my = new Triangle(5,10);
+undefined
+>>> my.getArea();
+25
+>>> my.toString();
+"Triangle"
+>>> my.__proto__.__proto__.__proto__.constructor
+Shape()
+>>> var s= new Shape();
+undefined
+>>> s.name
+"shape"
+
+//精良将要共享的属性与方法添加到原型中，然后知围绕原型构建继承关系。
+
+
+@uber---子对象访问父对象的方式
+function Shape(){}
+//augment prototype
+Shape.prototype.name = 'shape';
+Shape.prototype.toString = function() {    //检查对象中是否存在this.constructor.uber属性，如果存在就调用该属性的toString方法。
+    var result = [];
+    if(this.constructor.uber) {
+        result[result.length] = this.constructor.uber.toString();
+    }
+    result[result.length] = this.name;
+    return result.join(',');
+};
+function TwoDShape(){ }
+//take care of inheritance
+var F = function(){};
+F.prototype = Shape.prototype;
+TwoDShape.prototype = new F();
+TwoDShape.prototype.constructor = TwoDShape;
+TwoDShape.uber = Shape.prototype;
+//augment prototype
+TwoDShape.prototype.name = '2D shape';
+
+function Triangle(side,height){
+    this.side = side;
+    this.height = height;
+}
+
+//take care of inheritance
+var F = function(){};
+F.prototype = TwoDShape.prototype;
+Triangle.prototype = new F();
+Triangle.prototype.constructor = Triangle;
+Triangle.uber = TwoDShape.prototype;
+//augment prototype
+Triangle.prototype.name = 'Triangle';
+Triangle.prototype.getArea = function(){ return this.side*this.height/2;}
+//上面的程序新增了：
+//1.将uber属性设置成了指向其父级原型的引用
+//头toString（）方法进行了更新。
+
+>>> var my = new Triangle(5,10);
+undefined
+>>> my.toString();
+"shape,2D shape,Triangle"
+
+@将继承部分封装成函数
+//将实现继承关系的代码提炼出来，并迁入一个叫做extend()的可重用函数中：
+function extend(Child,Parent) {
+    var F = function(){};
+    F.prototype = Parent.prototype;
+    Child.prototype = new F ();
+    Child.prototype.constructor = Child;
+    Child.uber = Parent.prototype;
+}
+
+//然后通过简单的调用来实现基础：extend(TwoDShape,Shape);
+//以及：  extend(Triangle,TwoDShape);
+//这也是YUI（Yahoo!User Interface）库在实现继承关系式所采用的的方法。
+
+@属性拷贝
+
+
+
+
+
+
+
+
+
+
