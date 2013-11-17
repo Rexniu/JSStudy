@@ -262,7 +262,268 @@ function extend(Child,Parent) {
 //以及：  extend(Triangle,TwoDShape);
 //这也是YUI（Yahoo!User Interface）库在实现继承关系式所采用的的方法。
 
-@属性拷贝
+@属性拷贝   //？？？？
+
+function extend2(Child,Parent) {
+    var p = Parent.prototype;
+    var c = Child.prototype;
+    for (var i in p) {
+        c[i] = p[i];
+    }
+    c.uber = p;
+}
+var Shape = function () {};
+var TwoDShape = function () {};
+Shape.prototype.name = 'shape';
+Shape.prototype.toString = function() {return this.name;};
+
+
+>>> extend(TwoDShape,Shape);  //通过extend()方法来实现继承，name属性既不会是TwoDShape()实例的属性，
+                             //也不会成为其原型对象的属性,但是子对象依然可以通过继承方式来访问该属性。
+undefined
+>>> var td = new TwoDShape();
+undefined
+>>> Shape.prototype.name = 'shape';
+"shape"
+>>> td.name
+"shape"
+>>> TwoDShape.prototype.name
+"shape"
+>>> td.__proto__.name
+"shape"
+>>> td.hasOwnProperty('name')
+false
+>>> td.__proto__.hasOwnProperty('name')
+false
+
+>>> extend2(TwoDShape,Shape);  //通过extend2()方法来实现，TwoDShape（）的原型中就会拷贝有属于自己的name属性，
+                              //同样，其中也会拷贝属于自己的toString方法，但这只是一个函数引用，函数本身并没有被再次创建。
+undefined
+>>> td.__proto__.hasOwnProperty('name');
+true
+>>> td.__proto__.hasOwnProperty('toString');
+true
+>>> td.__proto__.hasOwnProperty === Shape.prototype.toString
+true
+
+@小心处理引用拷贝
+>>> var A = function(){}, B = function(){};  //创建两个构造器函数
+undefined
+>>> A.prototype.stuff = [1,2,3];   //在A的原型中添加一些属性
+[1, 2, 3]
+>>> A.prototype.name = 'a';
+"a"
+>>> extend2(B,A);    //使用extend2()B的原型继承了A的原型属性
+undefined
+>>> B.prototype.hasOwnProperty('name')
+true
+>>> B.prototype.hasOwnProperty('stuff')
+true
+>>> B.prototype.stuff    //name属于基本类型属性，创建的是一份全新的拷贝，stuff属性是一个数组对象，它所执行的是引用拷贝。
+[1, 2, 3]
+>>> B.prototype.stuff === A.prototype.stuff
+true
+>>> B.prototype.name += 'b'   //如果改变B中name拷贝，不会对A产生影响
+"ab"
+>>> A.prototype.name
+"a"
+>>> B.prototype.stuff.push(4,5,6);  //如果改变的是B的stuff属性，A就会受到影响了，因为这两个属性引用的是同一个数组。
+6
+>>> A.prototype.stuff
+[1, 2, 3, 4, 5, 6]
+>>> B.prototype.stuff = ['a','b','c'];  //如果用另一个对象对B的stuff属性进行完全重写（而不是修改现有属性），则，A的stuff属性会继续引用原有对象，而B的stuff属性则指向了新的对象。
+["a", "b", "c"]
+>>> A.prototype.stuff
+[1, 2, 3, 4, 5, 6]
+
+@对象之间的继承
+function extendCopy(p) {
+    var c = {};
+    for (var i in p) {
+        c[i] = p[i];
+    }
+    c.uber = p;
+    return c;
+}
+var shape = {
+    name: 'shape',
+    toString: function(){ return this.name;}
+}
+var twoDee = extendCopy(shape);
+twoDee.name = '2D shape';
+twoDee.toString = function(){ return this.uber.toString() + ',' + this.name;};
+
+var triangle = extendCopy(twoDee);
+triangle.name = 'Triangle';
+triangle.getArea = function(){ return this.side*this.height/2;}
+
+>>> triangle.side = 5; triangle.height = 10;triangle.getArea();
+25
+>>> triangle.toString();
+"shape,2D shape,Triangle"
+
+//对于这种方法而言：可能的问题就在于初始化一个新triangle对象的过程过于繁琐。
+
+@深拷贝
+//extendCopy()函数所用的创建方式叫做浅拷贝（shallow copy），与之相对的是深拷贝（deep copy）
+//由之前谈论可知：当对象类型的属性背靠背是，实际上拷贝的只是该对象在内存中的位置指针。
+//这一过程就是所谓浅拷贝，在这种情况下，如果我们修改了拷贝对象，就等同于修改了原对象，深度拷贝可以帮助避免
+
+//定义深度copy
+function deepCopy(p,c){
+    var c = c || {};
+    for (var i in p) {
+        if (typeof p[i] === 'object') {
+            c[i] = (p[i].constructor === Array)? []:{};
+            deepCopy(p[i],c[i]);
+        } else {
+            c[i] = p [i];
+        }
+    }
+    return c;
+}
+//创建一个包含数组和子对象属性的对象
+var parent = {
+    numbers: [1,2,3],
+    letters: ['a','b','c'],
+    obj: {
+        prop:1
+    },
+    bool:true
+};
+//测试结果 mydeep 和 myshallow
+>>> var mydeep = deepCopy(parent);
+undefined
+>>> var myshallow = extendCopy(parent);
+undefined
+>>> mydeep.numbers.push(4,5,6);
+6
+>>> mydeep.numbers
+[1, 2, 3, 4, 5, 6]
+>>> parent.numbers
+[1, 2, 3]
+>>> myshallow.numbers.push(10)
+4
+>>> myshallow.numbers
+[1, 2, 3, 10]
+>>> parent.numbers[1,2,3,10]
+undefined
+>>> mydeep.numbers   //未改变
+[1, 2, 3, 4, 5, 6]
+
+@object（）
+
+function object(o) {    //用object()函数来接受父对象，并返回该对象为原型的新对象。
+    function F() {}
+    F.prototype = o;
+    return new F();
+}
+
+function object(o) {   //如需要访问buer属性，可以继续object()函数。
+    var n;
+    function F() {}
+    F.prototype = o;
+    n = new F();
+    n.uber = o;
+    return n;
+}
+
+var triangle = object(twoDee);
+triangle.name = 'Triangle';
+triangle.getArea = function(){ return this.side * this.height/2;};
+>>> triangle.toString();     //新triangle对象的行为依然不变。
+"shape,2D shape,Triangle"
+
+//这种继承方法也成为原型继承
+
+@ 原型继承与属性拷贝的混合应用
+//继承：1.使用原型继承的方式克隆现存对象。
+// 2. 对其他对象使用属性拷贝的方式。
+
+function objectPlus(o,stuff) {   //接受两个参数，对象o用于继承，另一个对象stuff用于拷贝方法与属性。
+    var n;
+    function F() {}
+    F.prototype = o;
+    n = new F();
+    n.uber = o;
+    
+    for(var i in stuff) {
+        n[i] = stuff[i];
+    }
+    return n;
+}
+
+var shape = {                            //一个基本对象shape
+    name:'shape',
+    toString:function() { return this.name;}
+};
+
+var twoDee = objectPlus(shape,{      //创建一个继承于shape的2D对象
+   name:'2D shape',
+   toString:function(){ return this.uber.toString() +','+this.name}
+});
+
+var triangle = objectPlus(twoDee,{          //创建一个继承于2D对象的triangle对象，并添加一些额外属性。
+    name:'Triangle',
+    getArea: function(){return this.side*this.height/2},
+    side:0,
+    height:0
+});
+
+>>> var my = objectPlus(triangle,{side:4,height:4})     //创建一个具体的triangle对象my，并自定义side和height属性。
+undefined
+>>> my.getArea();
+8
+>>> my.toString();            //？？？？？WHY??当toString()函数被执行是，Triangle的name属性会被重复两次。
+"shape,2D shape,Triangle,Triangle"
+>>> var my = objectPlus(triangle,{side:4,height:4,name:'My 4x4'});
+undefined
+>>> my.toString();
+"shape,2D shape,Triangle,My 4x4"
+
+@多重继承
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
