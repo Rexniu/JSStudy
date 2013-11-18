@@ -482,8 +482,42 @@ undefined
 "shape,2D shape,Triangle,My 4x4"
 
 @多重继承
+//创建一个multi（）函数，它可以接受任意数量的输入性对象。然后在其中实现一个双循环，内层循环用于拷贝属性，外层循环用于遍历函数参数中所传递进来的所有对象。
+function multi() {    
+    var n = {},stuff,j = 0,len = arguments.length;
+    for(j = 0;j< len;j++){
+        stuff = arguments[j];
+        for (var i in stuff) {
+            n[i] = stuff[i];
+        }
+    }
+    return n;
+}
 
 
+var shape = {
+    name:'shape',
+    toString: function(){ return this.name;}
+};
+
+var twoDee = {
+    name:'2D shape',
+    dimensions:2
+    };
+
+var triangle = multi(shape,twoDee,{          //创建shape、twoDee以及一个匿名对象。调用multi()函数将这三个对象传递给它，该函数返回新建的triangle对象。
+    name: 'Triangle',
+    getArea: function(){return this.side*this.height/2;},
+    side:5,
+    height:10
+});
+
+>>> triangle.getArea()
+25
+>>> triangle.dimensions
+2
+>>> triangle.toString()
+"Triangle"
 
 
 
