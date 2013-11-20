@@ -1,0 +1,190 @@
+浏览器环境
+
+//JavaScript程序是不能脱离宿主环境而独立运行的。
+//BOM（Brower Object Model,及浏览器对象模型）
+//DOM(Document Object Model,即文档对象模型)
+
+//在JavaScript中，每个宿主环境都有一个全局对象。具体到浏览器环境中，就
+//是window对象了，所有的JavaScript核心函数也都只是window对象的方法。
+
+//navigator是一个用于反映浏览器本身及其功能信息的对象。
+>>> window.navigator.userAgent
+"Mozilla/5.0 (Windows NT 6.2; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0"
+
+
+if (typeof window.addEventListener === 'function') {
+	//feature is supported,let's use it
+}else {
+	//hmm,this feature is not supported, will have to 
+	//think of another way
+}
+
+@Firebug的备忘功能
+
+>>> navigator
+Navigator { mozApps={...}, mimeTypes=MimeTypeArray, plugins=PluginArray, 更多...}
+>>> console.dir(navigator)
+
+//会得到一份完整的属性列表，以及这些属性的而当前值。
+
+
+@windown.lcoation  用于存储当前载入页面URL信息的对象。
+>>> window.location
+http://www.google.com.hk/ { constructor={...}, protocol="http:", host="www.google.com.hk", 更多...}
+>>> for(var i in location) {console.log(i + ' = "' + location[i] + '"')}
+hash = ""
+protocol = "http:"
+host = "www.google.com.hk"
+pathname = "/"
+href = "http://www.google.com.hk/"
+hostname = "www.google.com.hk"
+search = ""
+port = ""
+origin = "http://www.google.com.hk"
+
+reload = "function reload() {
+    [native code]
+}"
+
+replace = "function replace() {
+    [native code]
+}"
+
+assign = "function assign() {
+    [native code]
+}"
+
+valueOf = "function valueOf() {
+    [native code]
+}"
+
+//页面导航的不同方式
+window.location.href = 'http://www.packtpub.com'
+location.href = 'http://www.packtpub.com'
+location = 'http://www.packtpub.com'
+location.assign('http://www.packtpub.com')
+
+location.replace('http://www.yahoo.com')
+
+location.reload()   //重新载入
+
+window.location.href = window.location.href   //也可以让location.href属性再次指向自己
+
+location = loction
+
+@window.history
+//允许我们在同一个浏览器会话中存储有限数量的访问记录
+
+>>> window.history.length    //查看数量
+7
+>>> window.history[0]      //不能这样访问
+Error: The operation is insecure
+history.forward()  //前进
+history.back()    //后退
+history.go(-1)    //同样可以实现页面跳转
+history.go(-2)    //后退
+history.go(0)    //重载当前页面
+
+@window.frames
+//是当前所有frame元素的集合。无论当前页面是否存在frame元素，window.frame属性总是存在的，并指向了window对象本身
+>>> window.frames === window
+true
+>>> frames.length
+3
+>>> window.frames[0]
+Window sh136.html#
+>>> window.frames[0].window
+Window sh136.html#
+>>> frames[0].window
+Window sh136.html#
+>>> frames[0].window.location.reload()
+Error: Permission denied to access property 'reload'
+
+//通过一个叫top的属性，我们可以反问道当前最顶层页面（包含所有其他farme元素的页面）中的任何frame元素。
+>>> window.frames[0].window.top === window
+true
+>>> window.frames[0].window.top === window.top    //？？？？？
+true
+>>> window.frames[0].window.top === top
+true
+>>> self === window
+true
+>>> frames[0].self == frames[0].window
+true
+>>> frames[0].self == frames[0].window
+true
+>>> window.frames['myframe'] === window.frames[0]    //如果元素拥有名字属性，我们就可以通过名字来访问frame
+false
+
+@window.screen  该属性所提供的是浏览器以外的桌面信息，
+>>> window.screen.colorDepth   //显示器色位
+24
+>>> screen.width
+1366
+>>> screen.availWidth
+1366
+>>> screen.height
+768
+>>> screen.availHeight
+768
+
+@windows.open()/close()
+var win = window.open('http://www.packtpub.com','packt','width=300,height=300,resizable=yes');
+>>> win.close()     //关闭新窗口
+
+@window.moveTo()、window.resizeTo()
+window.moveTo(100,100)；   //????没反应。。
+>>> window.moveBy(10,-10)  //????没反应。。
+
+@window.alert()、window.prompt()、window.confirm()
+
+>>> window.alert(213)   //alert()只是全局对象的一个方法
+>>> var answer = confirm('Are you cool?'); console.log(answer);
+true    //点击“确定” 返回true  点击“取消”  返回 false
+
+so....
+
+if ( confirm('Are you sure you want to delete this item?')) {
+	//delete
+} else {
+	//abort
+}
+
+
+
+>>> var answer = prompt('And your name was ?'); console.log(answer);
+guess    //如果点击Cancel或者X以及Esc退出，对话框将会返回null
+
+@window.setTimeout()、window.setInterval()
+//这两个方法主要被用于某些代码片段的执行调度。
+//setTimeout()用于在指定的毫秒数后执行某段既定代码，
+//setInterval()则用于每隔一段毫秒数重新执行这段代码。
+
+function boo() {alert('Boo!');}
+>>> setTimeout(boo,2000);    //Chrome 可以延时弹出，FF没反应  WHY？？？
+36                            //返回的整数是该函数的超时ID，可以用这个ID调用clearTimeout()方法来取消当前的超时。
+
+
+function boo() { console.log('Boo');};     //同样的Chrome可以，FF没反应？？？why？
+var id = setInterval(boo,2000)
+undefined
+13
+Boo VM295:2
+clearInterval(id)    //取消操作。
+undefined
+
+var id = setInterval("alert('boo,boo')",2000);   //虽没有错误，但不建议使用
+
+var id = setInterval(                 //这个更好些，将相关函数调用封装成函数。
+    function(){
+        alert('boo,boo');
+    },2000
+);
+
+
+
+@window.cocument
+//是一个BOM对象。
+
+
+@DOM
