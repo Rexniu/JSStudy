@@ -188,3 +188,190 @@ var id = setInterval(                 //这个更好些，将相关函数调用封装成函数。
 
 
 @DOM
+//DOM:Document Object Model,即文档对象模型,是一种将XML或HTML文档解析成树形节点的
+//方法。通过DOM的方法与属性，我们就可以访问到页面中的任何元素，并进行元素的修改、
+//删除以及添加等操作。DOM也是一套语言对立的API（Application Programming Interface）
+//不仅在 JavaScript中有相关的实现，在其他语言中也有实现。
+
+>>> var bd = document.documentElement.childNodes[1]  //把body元素的引用赋值给一个变量
+undefined
+>>> bd.childNodes.length
+5
+>>> bd.childNodes[1]
+<script src="/xjs/_/js/k=xjs.s.en_US.dtklyhSMdi0.O/m=sy15,cdos,sy32,gf,vm,sy39,sy66,sy67,sy194,tbui,mb,sy101,sy167,cfm,abd,sy53,sy54,sy56,sy57,sy55,sy58,sy63,sy64,sy34,sy59,sy60,sy52,sy61,sy62,sy65,sy68,sy69,sy90,sy51,llc,foot,sy173,sy175,lu,sy42,sy179,m,me,sy146,sy145,sy157,sy147,em2,em3,em4,sy192,tnv,sy38,sy46,sy40,sy43,sy44,sy45,sy47,sy41,ttbcdr,sy109,adp,sy123,async,sy91,hv,sy92,jsaleg,sy97,sy98,sy171,kp,lc,ob,sf,sy160,sfa,tbpr,sy84,sy185,sy119,sy186,tr/am=EAIAog/rt=j/d=0/sv=1/rs=AItRSTOUHaOtIrkQ8w3pAauoLuCCdKl6UA">
+>>> bd.childNodes[1].hasAttributes()     //用hasAttributes()方法来检查该元素中是否存在属性。
+true
+>>> bd.childNodes[1].hasAttributes().length
+undefined
+>>> bd.childNodes[1].attributes.length   
+1
+>>> bd.childNodes[1].attributes[0].nodeName   //通过索引值或属性名来访问一个属性，也可以盗用getAttribut（）方法来获取相关的属性值。
+"src"
+>>> bd.childNodes[1].attributes[0].nodeValue
+"/xjs/_/js/k=xjs.s.en_US.dtklyhSMdi0.O/m=sy15,cdos,sy32,gf,vm,sy39,sy66,sy67,sy194,tbui,mb,sy101,sy167,cfm,abd,sy53,sy54,sy56,sy57,sy55,sy58,sy63,sy64,sy34,sy59,sy60,sy52,sy61,sy62,sy65,sy68,sy69,sy90,sy51,llc,foot,sy173,sy175,lu,sy42,sy179,m,me,sy146,sy145,sy157,sy147,em2,em3,em4,sy192,tnv,sy38,sy46,sy40,sy43,sy44,sy45,sy47,sy41,ttbcdr,sy109,adp,sy123,async,sy91,hv,sy92,jsaleg,sy97,sy98,sy171,kp,lc,ob,sf,sy160,sfa,tbpr,sy84,sy185,sy119,sy186,tr/am=EAIAog/rt=j/d=0/sv=1/rs=AItRSTOUHaOtIrkQ8w3pAauoLuCCdKl6UA"
+属性用法中的 nodeValue 属性已不赞成使用。请使用 value 替代。
+debugg...al code (第 1 行)
+>>> bd.childNodes[1].attributes[0].value
+"/xjs/_/js/k=xjs.s.en_US.dtklyhSMdi0.O/m=sy15,cdos,sy32,gf,vm,sy39,sy66,sy67,sy194,tbui,mb,sy101,sy167,cfm,abd,sy53,sy54,sy56,sy57,sy55,sy58,sy63,sy64,sy34,sy59,sy60,sy52,sy61,sy62,sy65,sy68,sy69,sy90,sy51,llc,foot,sy173,sy175,lu,sy42,sy179,m,me,sy146,sy145,sy157,sy147,em2,em3,em4,sy192,tnv,sy38,sy46,sy40,sy43,sy44,sy45,sy47,sy41,ttbcdr,sy109,adp,sy123,async,sy91,hv,sy92,jsaleg,sy97,sy98,sy171,kp,lc,ob,sf,sy160,sfa,tbpr,sy84,sy185,sy119,sy186,tr/am=EAIAog/rt=j/d=0/sv=1/rs=AItRSTOUHaOtIrkQ8w3pAauoLuCCdKl6UA"
+>>> bd.childNodes[1].getAttribute('class')
+null
+
+>>> bd.childNodes[1].nodeName
+"SCRIPT"
+>>> bd.childNodes[1].innerHTML
+""
+>>> bd.childNodes[3].innerHTML
+"#nycntg{margin:6px 25px 10px 0}#nycp{background-color:#fafafa;border-left:1px solid #ebebeb;bottom:0;left:0;margin-left:33px;min-width:2
+
+@DOM访问的快捷方法
+//getElementsByTagName()、getElementsByName()、getElementById()。
+>>> var bd = document.documentElement.childNodes[1]
+undefined
+>>> bd.childNodes.length
+9
+>>> document.getElementsByTagName('p').length
+3
+>>> document.getElementsByTagName('p')[0]
+<p calss="opener">
+>>> document.getElementsByTagName('p').item(0)
+<p calss="opener">
+>>> document.getElementsByTagName('p')[0].innerHTML
+"first paragh"
+>>> document.getElementsByTagName('p')[2]
+<p id="closer">
+>>> document.getElementsByTagName('p')[2].id
+"closer"
+>>> document.getElementsByTagName('p')[0].className
+""
+
+
+>>> document.getElementById('closer')
+<p id="closer">
+>>> var para = document.getElementById('closer')
+undefined
+>>> para.nextSibling
+<TextNode textContent="\n ">
+>>> para.previousSibling
+<TextNode textContent="\n ">
+>>> para.previousSibling.previousSibling
+<p>
+>>> para.previousSibling.previousSibling.previousSibling
+<TextNode textContent="\n ">
+>>> para.previousSibling.previousSibling.nextSibling.nextSibling
+<p id="closer">
+>>> document.body
+<body>
+>>> document.body.nextSibling   //nextDibling与prviousSibling两个属性。
+null
+>>> document.body.previousSibling
+<head>
+
+>>> document.body.firstChild     //firstChild 和 lastChild 属性
+<TextNode textContent="\n ">
+>>> document.body.lastChild
+<TextNode textContent="\n \n">
+>>> document.body.lastChild.previousSibling
+Comment { data=" and that's about it ", length=21, previousElementSibling=p#closer, 更多...}
+>>> document.body.lastChild.previousSibling.nodeValue
+" and that's about it "
+
+@遍历DOM
+function walkDOM(n) {
+    do {
+        console.log(n);
+        if (n.hasChildNodes()) {
+            walkDOM(n.firstChild)
+        }
+    } while (n = n.nextSibling)
+}
+
+>>> walkDOM(document.documentElement)
+<html>
+<head>
+<meta charset="utf-8">
+<TextNode textContent="\n ">
+<body>
+<TextNode textContent="\n ">
+<p calss="opener">
+<TextNode textContent="first paragh">
+<TextNode textContent="\n ">
+<p>
+<em>
+<TextNode textContent="second">
+<TextNode textContent=" paragraph">
+<TextNode textContent="\n ">
+<p id="closer">
+<TextNode textContent="final">
+<TextNode textContent="\n ">
+Comment { data=" and that's about it ", length=21, previousElementSibling=p#closer, 更多...}
+<TextNode textContent="\n \n">
+undefined
+>>> walkDOM(document.body)
+<body>
+<TextNode textContent="\n ">
+<p calss="opener">
+<TextNode textContent="first paragh">
+<TextNode textContent="\n ">
+<p>
+<em>
+<TextNode textContent="second">
+<TextNode textContent=" paragraph">
+<TextNode textContent="\n ">
+<p id="closer">
+<TextNode textContent="final">
+<TextNode textContent="\n ">
+Comment { data=" and that's about it ", length=21, previousElementSibling=p#closer, 更多...}
+<TextNode textContent="\n \n">
+undefined
+
+@DOM节点的修改
+>>> var my = document.getElementById('closer'); 
+undefined
+>>> my.innerHTML = 'finall!!!'      //修改文本
+"finall!!!"
+>>> my.innerHTML='<em>my</em> final';    //innerHTML可以接受任何HTML代码串。
+"<em>my</em> final"
+>>> my.firstChild
+<em>
+>>> my.firstChild.firstChild
+<TextNode textContent="my">
+>>> my.firstChild.firstChild.nodeValue = 'yours';     //修改nodeValue属性来实现相关文本修改
+"yours"
+
+@修改样式
+>>> my.style.border = '1px solid red';
+"1px solid red"
+>>> my.style.fontWeight = 'bold';
+"bold"
+>>> my.align = 'right';
+"right"
+>>> my.name = 'myname'
+"myname"
+>>> my.id
+"closer"
+>>> my.id = 'further'
+"further"
+>>> my.id
+"further"
+>>> my
+<p id="further" align="right" style="border: 1px solid red; font-weight: bold;">
+
+@玩转表单
+>>> var inputs = document.getElementsByTagName('input');
+undefined
+>>> inputs.length
+10
+>>> inputs[1].name
+"safe"
+>>> inputs[1].value = 'you guess';
+"you guess"
+
+function toggle(){       //没试出效果，Chrome、FF均是，google改了
+    var st = document.getElementsByTagName('input')[3].style;
+    st.visibility = (st.visibility === 'hidden') ? 'visible':'hidden';
+}
+
+var myint = setInterval(toggle,1000)
+clearInterval(myint)
+
+@新建节点
