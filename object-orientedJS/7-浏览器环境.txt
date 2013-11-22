@@ -375,3 +375,130 @@ var myint = setInterval(toggle,1000)
 clearInterval(myint)
 
 @新建节点
+//新建节点：createElement()和cretateTextNode()
+//append方法则可以用来将新节点添加到DOM
+>>> var myp = document.createElement('p'); //创建一个新的元素
+undefined
+>>> myp.innerHTML = 'yet another';  //添加内容
+"yet another"
+>>> myp.style  //被创建的元素会自动获得所有的默认属性，例如style。
+CSS2Properties { length=0, MozAppearance="", MozOutlineRadius="", 更多...}
+>>> myp.style.border = '2px dotted blue';    //修该其属性
+"2px dotted blue"
+>>> document.body.appendChild(myp)    //将新节点添加到DOM树结构中
+<p style="border: 2px dotted blue;">
+
+@纯DOM创建节点
+// 1.新建一个内容为“yet another”的文本节点
+// 2.再新建一个段落节点
+// 3.将文本节点添加为段落节点的子节点。
+// 4.将段落节点添加为body的子节点
+
+//create P
+var myp = document.createElement('p');
+//create text node and append to p
+var myt = document.createTextNode('one more paragraph');
+myp.appendChild(myt);
+//create STRONG and append another text node to it
+var str = document.createElement('string');
+str.appendChild(document.createTextNode('bold'));
+//append   STRONG to p 
+myp.appendChild(str);
+//append P to BODY
+document.body.appendChild(myp);
+
+@cloneNode()
+>>> var el = document.getElementsByTagName('p')[1];   
+undefined
+>>> el
+<p>
+>>> document.body.appendChild(el.cloneNode(false));  //建立一份el的浅拷贝（false，浅拷贝：只对当前的节点），并将其添加到body元素的末端。
+<p>
+>>> document.body.appendChild(el.cloneNode(true));   //建立一份深拷贝（true，深拷贝，包括所有子节点）
+<p>
+>>> document.body.appendChild(el.firstChild.cloneNode(true));  //只拷贝其中的EM元素
+<em>
+>>> document.body.appendChild(el.firstChild.firstChild.cloneNode(false));
+<TextNode textContent="second">
+
+@insertBefore()
+//insertBefor（）可以指定将新节点插入哪一个元素的前面。
+
+>>> document.body.appendChild(document.createTextNode('boo!'));
+<TextNode textContent="boo!">    //插入到body元素的末端
+
+document.body.insertBefore(         //插入到body元素的第一个子节点
+    document.createTextNode('boo!'),
+    document.body.firstChild    
+);                          
+
+@移除节点
+//从DOM树中移除一个节点，可以调用removeChild（）
+
+>>> var myp = document.getElementsByTagName('p')[1]
+undefined
+>>> var removed = document.body.removeChild(myp);
+undefined
+>>> removed
+<p>
+>>> removed.firstChild
+<em>
+>>> var p = document.getElementsByTagName('p')[1]
+undefined
+>>> p
+<p id="closer">
+>>> var replaced = document.body.replaceChild(removed,p);
+undefined
+>>> replaced
+<p id="closer">
+>>> document.body.innerHTML = '';   //将某个子树中的内容一并抹去的话，最便捷的方式就是将他的innerHTML设置为空字符串。
+""
+>>> document.body.firstChild
+null
+
+function removeAll(n) {              //使用DOM方法就必须对其所有有的子节点进行遍历并逐个删除。
+    while (n.firstChild) {
+        n.removeChild(n.firstChild);
+    }
+}
+>>> removeAll(document.body);
+undefined
+
+
+@只适用于HTML的DOM对象
+// document.images
+// document.applets
+// document.links
+// document.anchors
+// document.forms
+
+//document.forms[0]  相当于调用：document.getElementsByTagName('froms')[0];
+
+@document.write()
+
+<p>It is now<script>document.write("<em>"+new Date()+"</em>");</script></p>
+
+//document.writen();功能与document.write()基本相同，只不过该方法会在末尾自动加入换行符“\n”
+!!!我们只能在页面被载入时调用document.write()方法，如果我们也试图在页面载入之后调用发该方法，
+整个页面的内容都会被替换掉。
+
+
+@Cokkies、Title、Referrer、Domain
+//document.cookie:字符串，存储了用于往返服务器端与客户端之间的cookie信息。
+//document.title:用来修改页面在浏览器窗口中所显示的标题的。
+//document.referrer中记录的是我们之前所访问过的页面URL。这与浏览器在请求页面是所发送的HTTP头信息
+ // 中的Referer值是相同的。
+//document.domain:通过它可以对当前所载入页面的域名进行访问。域名只能朝着更非具体化的方向进行。
+>>> document.domain
+"www.google.com.hk"
+>>> document.domain
+"www.google.com.hk"
+>>> document.domain = "google.com.hk"
+"google.com.hk"
+>>> document.domain = "www.google.com.hk"
+Error: Illegal document.domain value
+	
+
+document.domain = "www.google.com.hk"
+
+@事件
