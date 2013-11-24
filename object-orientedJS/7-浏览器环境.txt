@@ -514,6 +514,30 @@ undefined
 //addEventListener()第三个参数，决定代码是否采用捕捉法，这个参数设置为false，只是用冒泡法来处理事件。
 
 
+@阻断传播
+>>> function paraHandler(){alert('clicked apragraph');}
+undefined
+>>> var para = document.getElementById('closer');
+undefined
+>>> para.addEventListener('click',paraHandler,false);
+undefined
+>>> document.body.addEventListener('click',function(){alert('clicked body')},false);
+undefined
+>>> document.addEventListener('click',function(){alert('clicked document')},false);
+undefined
+>>> window.addEventListener('click',function(){alert('clicked window')},false);
+undefined
 
-
-
+//点击最后一段运行结果：依次显示：clicked paragraph,clicked body,clicked doc,clicked window
+//在IE中，单击事件通常是不会被传播到window这一级的，但Firefox可以。
+//addEventListener（）方法对立面就是removeEvenListener()。
+>>> para.removeEventListener('click',paraHandler,false);
+undefined
+//NOW，来阻断事件的传播
+function paraHandler(e){
+    alert('clicked paragraph');
+    e.stopPropagation();
+}
+>>> para.addEventListener('click',paraHandler,false);
+undefined
+//此时再单击最后一段，就只弹出clicked apragraph一个窗口了
