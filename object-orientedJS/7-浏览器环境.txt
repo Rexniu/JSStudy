@@ -502,3 +502,18 @@ Error: Illegal document.domain value
 document.domain = "www.google.com.hk"
 
 @事件
+>>> var mypara = document.getElementById('closer');
+undefined
+>>> mypara.addEventListener('click',function(){alert('Boo!'),false});
+undefined
+>>> mypara.addEventListener('click',console.log,false);   //没效果，FF、Chrome都没，Why？
+undefined
+
+//事件传播过程：1.捕捉法：单击首先发生在document上，然后依次传递给body、列表、列表项，最终达到链接。
+//2.冒泡法：单击首先发生在链接上，然后逐层向上冒泡，直至document对象。
+//addEventListener()第三个参数，决定代码是否采用捕捉法，这个参数设置为false，只是用冒泡法来处理事件。
+
+
+
+
+
