@@ -541,3 +541,77 @@ function paraHandler(e){
 >>> para.addEventListener('click',paraHandler,false);
 undefined
 //此时再单击最后一段，就只弹出clicked apragraph一个窗口了
+//！！！由匿名函数所定义的监听器是不能被移除的。如：
+document.body.removeEventListner('click',
+	function(){
+	alert('clicked body');
+},
+false);  //does NOT remove the handler
+
+@防止默认行为
+//浏览器模型自身存在一些预定义行为：单击链接会载入另一个页面。
+//可以为该链接设置监听器，并禁用其默认行为。
+//每次的那几链接之后回答“Are you sure you want to follow this link”
+//all links
+var all_links = document.getElementsByTagName('a');
+for (var i =0;i< all_links.length;i++){ //loop all links
+	all_links[i].addEventListener(
+	'click', //event type
+	function(e){  //handler
+	   if(!confirm('Are you sure you want to follow this link?')){
+	       e.preventDefault();
+	   }
+    },
+   false );//don't use capturing
+}
+
+@跨浏览器事件监听器
+//考虑了该死的IE后的代码，你妹的IE
+function callback(evt) {
+    //prep work
+    evt = evt || windown.event;
+    var target = (typeof evt.target !== 'undefined') ? evt.target : evt.srcElement;
+    //actual callback work
+    console.log(target.nodeName);
+}
+//start listening for click events
+if (document.addEventListener) { //FF
+    document.addEventListener('click',callback,false);
+} else if (document.attachEvent){ //IE
+    document.attachEvent('onclick',callback);
+} else {
+    document.onclick = callback;
+}
+@XMLHttpRequest对象
+//XMLHttpRequest()是一个用构建HTTP请求的JavaScript对象（即构造器）。
+//AJAX就是在JavaScript和XML之间所建立的一种异步联系。
+
+>>> var xhr = new XMLHttpRequest();   //简单的创建一个对象
+undefined
+>>> xhr.onreadystatechange = myCallback;  //设置一个能触发readystatechange事件的事件监听器
+ReferenceError: myCallback is not defined
+	
+
+xhr.onreadystatechange = myCallback;
+
+/* 通过 ...llback; (第 2 行)
+>>> xhr.open('GET','somefile.txt',true);    //调用open(）方法。
+undefined
+>>> xhr.send('');     //发送请求
+
+XHR对象的readystate属性：
+0--未初始化状态  1--载入请求状态  2--载入完成状态  3--请求交互状态  4--请求完成状态
+
+function myCallback() {
+    if (xhr.readyState < 4) {
+     return; //not ready yet
+    }
+    if (xhr.status !==200) {
+        alert('Error!');  //the HTTP status code is not OK
+        return;
+    }
+    //all is fine, do the work
+    alert(xhr.responseText);
+}
+
+@在早于7的IE版本中创建XMLHttrRequest对象
