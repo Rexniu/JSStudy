@@ -614,4 +614,5 @@ function myCallback() {
     alert(xhr.responseText);
 }
 
-@在早于7的IE版本中创建XMLHttrRequest对象
+
+THE END
