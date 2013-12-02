@@ -1,0 +1,137 @@
+@编程模式
+@行为隔离
+//一个网页通常所有的三个要素：内容（HTML）、外观（CSS）、行为（JavaScript）
+*尽量不要使用内嵌事件的处理方法。（不适用类似于onclick,onmouseover这样的内嵌属性，而是利用addEventListener/attachEvent）
+行为隔离
+@命名空间
+（为了减少命名冲突，我们通常都是尽量减少使用全局变量的几乎，但这并不能根本解决问题，更好的办法
+是将变量和方法定义在不同的命名空间中）
+
+>>> var MYAPP = MYAPP || {}     //新建一个全局变量MYAPP
+undefined
+>>> MYAPP.event={};             //将某个全局对象设定为MYAPP的属性
+Object {}
+MYAPP.event = {                 //为MYAPP添加方法
+    addListener:function(e1,type,fn) {
+        //..do the things
+    },
+    addListenr:function(e1,type,fn)  {
+        //...
+    },
+    getEvent:function(e) {
+        //...
+    }
+    //...other methods or propertied
+}
+
+@命名空间中的构造器应用      ?????????
+//利用DOM工具本身定义的Element构造器
+MYAPP.dom = {};
+MYAPP.dom.Element = function(type,prop){
+    var tmp = document.createElement(type);
+    for (var i in prop ) {
+        tmp.setAttribute(i,prop[i]);
+    }
+}
+//也可用Text构造器来创建文本类节点
+MYAPP.dom.Text = function() {
+    return document.createTextNode(txt);
+}
+
+//使用改构造器在网页底部创建一个链接
+var ell = new MYAPP.dom.Element(
+    'a',
+    {href:'http://phpid.com'}
+);
+var e12 = new MYAPP.dom.Text('click me');
+ell.apppendChild(e12);
+document.body.appendChild(ell);
+@namespace()方法
+MYAPP.namespace('dom.style');
+上面等价于：
+ MYAPP.dom = {};
+ MYAPP.dom.style = {};
+
+
+var MYAPP = {};
+MYAPP.namespace = function (name){
+    var parts = name.split('.');
+    var current = MYAPP;
+    for (var i in parts) {
+        if (!current[parts[i]]) {
+            current[parts[i]] = {};
+        }
+        current = curent[parts[i]];
+    }
+}
+>>> MYAPP.namespace('event');
+undefined
+>>> MYAPP.namespace('dom.style');    
+undefined
+
+//这两句代码等价于：
+var MYAPP = {
+	event: {},
+	dom: {
+	style:{}
+	}
+}
+
+@初始化分支
+var MYAPP = {};
+MYAPP.event = {
+    addListener:null,
+    removeListener:null
+}
+
+if (typeof window.addEventListener === 'function') {
+    MYAPP.event.addListener = function(el,type,fn) {
+        el.addEventListener(type,fn,false);
+    };
+    MYAPP.event.removeListener = function(el,type,fn) {
+        el.removeEventListener(type,fn,false);
+    };
+} else if (typeof document.attachEvent === 'function') { //IE
+    MYAPP.event.addListener = function(el,type,fn) {
+        el.attachEvent('on' + type,fn);
+    };
+    MYAPP.event.removeListener = function(el,type,fn){
+        el.detachEvent('on' + type,fn);
+    };
+} else { //older browsers
+    MYAPP.evetn.addListener = function(el,type,fn) {
+        el['on'+type] = fn;
+    };
+    MYAPP.event.removeListener = function(el,type,fn) {
+        el['on' +type] = null;
+    };
+};
+
+//上述脚本定义了与路蓝旗特性相关的addListener()和removeListener()方法，当再次被调用时
+//就不需要探测浏览器特性了，脚本会执行的更快。
+@延迟定义
+//与初始化分支相比，该模式下的分支只有在相关函数第一次被调用时才会发生。
+//以下列子：在第一次被调用时，首先会检查浏览器支持的功能，然后为自己选择最合适的实现，最后
+//调用自身已完成真正的事件添加。当下一次调用时就会直接调用他选择的新方法而不再需要做分支判断。
+var MYAPP = {};
+MYAPP.myevent = {
+    addListener:function(e1,type,fn) {
+        if (typeof el.addEventListener === 'function') {
+            MYAPP.myevent.addListener = function(e1,type,fn) {
+                el.addEventListener(type,fn,false);
+            };
+        }else if (typeof el.attachEvent === 'function') {
+            MYAPP.myevent.addListener = function(el,type,fn) {
+                el.attachEven('on'+type,fn);
+            };
+        }else {
+            MYAPP.myevent.addListener = function(el,type,fn) {
+                el['on' + type] = fn;
+            };
+        }
+        MYAPP.myevent.addListener(el,type,fn);
+    }
+};
+
+
+@配置对象
