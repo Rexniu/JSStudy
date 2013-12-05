@@ -1,0 +1,54 @@
+@空白(Whitespace)
+var that = this;  //var和that之间的空格是不能被移除的，但是其他的空格都可以被移除。
+
+JavaScript提供两种注释形式：“/*  */” 和 “//”
+/*
+    var rm_a = /a*/.match(s);
+*/
+所以应尽量避免使用/* */注释。二用//代替。
+
+
+@标识符(Names)
+标识符不能使用如下保留字：
+abstract  
+bollean break  byte  
+case catch char class const  continue
+debugger  default  delete  do double
+else enum exort extends
+false  final  finally float  for function
+goto
+if implements import  in instanceof  int  interface 
+long
+native  new null
+package  private  protected  public 
+return
+short  static  super  switch  synchronized
+this  throw  throws  transient  true  try  typeof 
+var  volatile  void
+while  with
+还有一些本应被保留但没保留的字：undefined,NaN,Infinity
+
+@数字(Numbers)
+JavaScript只有一个单一的数字类型，他在内部蓓表示为64伟大浮点数。
+1和1.0是相同的值，这样避免了短整数的溢出问题。
+
+@字符串（Strings）
+字符串字面量可以被包围在单引号或双引号中，他可能包含0个或多个字符。“\”（反斜线符号）是转义字符
+字符串一段被创建，就永远无法改变它。
+
+@语句（Statements）
+   代码块是抱在一对花括号中的一组语句。不像其他的语言，JavaScript中的代码快不会创建一个新的作用域，因此变量应该被定义在函数的顶端，而不是在代码块中。  ？？？？ 
+   这些值被当做假（falsy）：false,null,undefined,空字符串‘’，数字0，数字NaN。其他所有的值都被当作真，包括true、字符串‘false’，以及所有的对象。
+   通过检测object.hasOwnProperty(variable)来确定这个属性名就是该对象的成员。
+   try语句执行一个代码块，并不或改代码块抛出的任何异常，catch从句定义个了一个新的变量，他讲接受该异常对象。
+   throw语句抛出一个异常，如果throw语句在一个try代码块中，那么控制权回跳到catch从句中。如果throw语句在函数中，则该函数调用被放弃，且控制权回调到调用该函数的try语句的catch从句中。
+    return语句回事一个函数提前返回，它可以指定要被返回的值。如果没有指定返回表达式，那么其返回值就是undefined。
+
+@表达式（expressions）
+   最简单的表达式就是字面量值（比如字符串或数字）、变量、内置的值（true、false、null、undefined、NaN和Infinity）、以new前导的调用表达式、以delete签到的属性存取表达式、包括在圆括号中的表达式、一个一个前缀运算符作为前导的表达式……
+   三元运算符 ？ 三个运算数，如果第一个运算数值为真，它产生第二个运算数的值，但是，如果第一个运算符数值为假，它会产生第三个运算数的值。
+
+@字面量（Literals）
+   对象字面量是一种方便之低昂新对象的表示方法。
+@函数（Functions）
+   函数字面量定义了函数值。
