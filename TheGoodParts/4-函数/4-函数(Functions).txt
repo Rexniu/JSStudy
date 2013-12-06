@@ -1,0 +1,16 @@
+函数（Functions）
+函数包含一组语句，他们是JavaScript的基础模块单元，用于代码服用、信息隐藏、和组合调用。
+@函数对象（Function Objects）
+   对象字面量产生的对象连接到Object.prototype，函数对象连接到Function.prototype(该原型对象本身连接到Object.prototype)。
+   每个函数对象在创建是也随带一个prototype属性，它的值是一个拥有constructor属性且值即为该函数的对象。
+
+@函数字面量（Function Literal）
+   函数字面量包括四个部分：1.保留字function  2.函数名，可以被省略（匿名函数）
+3.包围在圆括号中的一组参数   4.包围在花括号中的一组语句，是函数的主体。
+   闭包：通过函数字面量创建的函数对象包含一个连接到外部上下文的连接。
+
+@调用(Invocation)
+   每个函数接受两个附加的参数：this和arguments。this在面向对象编程中非常重要，它的值取决于调用的模式。JavaScript中一共有四种调用模式：方法调用模式、函数调用模式、构造器调用模式和apply调用模式。
+
+@方法调用模式
+   
