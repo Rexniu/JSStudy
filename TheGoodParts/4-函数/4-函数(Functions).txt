@@ -12,14 +12,44 @@
 @调用(Invocation)
    每个函数接受两个附加的参数：this和arguments。this在面向对象编程中非常重要，它的值取决于调用的模式。JavaScript中一共有四种调用模式：方法调用模式、函数调用模式、构造器调用模式和apply调用模式。
 
-@方法调用模式
+@方法调用模式(The Method Invoctation Pattern)
    当函数被保存为对象的一个属性时，我们称它为一个方法。
    方法可以使用this去访问对象，所以它能从对象中取值或修改该对象。this到对象的绑定发生在调用的时候。
 
-@函数调用模式
+@函数调用模式(The Function Invocation Pattern)
    当一个函数并非一个对象的属性时，那么它被当做一个函数来调用，当函数以此模式调用时，this被绑定到全局对象。这是语言设计上的一个错误。
 
-@构造器调用模式
+@构造器调用模式(The Constructor Invocation Pattern)
    
-@Apply调用模式
+@Apply调用模式(The Apply Invocation Pattern)
    apply方法构建一个参数数组并用其去调用函数。接受两个参数，第一个是将被绑定给this的值，第二个就是一个参数数组。
+
+@参数（Arguments）
+   当函数被调用时，会得到一个“免费”奉送的参数，那就是arguments数组。
+   arguments拥有一个length属性，但缺少所有的数组方法。
+
+@返回（Return）
+   return语句可用来是函数提前返回。当return被执行是，函数立即返回而不再执行余下的语句。一个函数总会返回一个值，如果没有指定返回值，则返回undefined。
+
+@异常(Exceptions)
+   throw语句中断函数的执行。
+   一个try语句只会有一个将捕获所有异常的catch代码块。
+
+@给类型增加方法(Arguments Types)
+   JavaScript允许给语言的基本类型增加方法。
+   可以通过给Function.prororype增加方法来时的发i放法对所有的函数可用。
+
+@递归
+   递归函数会直接或间接的调用自身的一种函数。
+   汉诺塔：
+var hanoi = function (disc,src,aux,dst) {
+    if(disc > 0) {
+        hanoi(disc -1,src,dst,aux);
+        document.writeln('Move disc'+disc+' from'+src+' to '+dst);
+        hanoi(disc-1,aux,src,dst);
+    }
+ }
+hanoi(3,'Src','Aux','Dst');
+Move disc1fromSrctoDst Move disc2fromSrctoAux Move disc1fromDsttoAux Move disc3fromSrctoDst Move disc1fromAuxtoSrc Move disc2fromAuxtoDst Move disc1fromSrctoDst 
+
+@作用域
