@@ -52,4 +52,94 @@ var hanoi = function (disc,src,aux,dst) {
 hanoi(3,'Src','Aux','Dst');
 Move disc1fromSrctoDst Move disc2fromSrctoAux Move disc1fromDsttoAux Move disc3fromSrctoDst Move disc1fromAuxtoSrc Move disc2fromAuxtoDst Move disc1fromSrctoDst 
 
-@作用域
+@作用域（Scope）
+   大多数使用C语言语法的语言都有块级作用域。
+   JavaScript确实有函数作用域，那意味着定义在函数中的参数和变量在函数外部是不可见的。而且在一个函数中的任何位置定义的变量在函数中的任何地方都可见。
+
+@闭包(Closure)
+   作用域的好处是内部函数可以访问定义他们的外部函数的参数和变量（除了this和arguments）。
+//创建一个名为quo的构造函数
+//构造出带有get_status私有属性的一个对象。
+var quo = function (status) {
+    return {
+        get_status:function() {
+            return status;
+        }
+    };
+}
+//构造一个quo实例
+var myQuo = quo('amazed');
+document.writeln(myQuo.get_status);
+（结果： function () { return status; }  WHY???）
+   当我们调用quo时，他返回包含get_status方法的一个新对象。该对象的一个引用保存在myQuo中。即使quo已经返回了，但get_status方法仍然享有访问quo对象的status属性的特权。get_status方法并不是反问该参数的一个拷贝；它访问的是该参数本身，这是可能的因为该函数可以访问它被创建是所处的上下文环境，这被称为闭包。
+
+@回调（Callbacks）
+   比如：
+request = prepare_the_request();
+response = send_request_synchronously(request);
+display(response);
+这种方式的问题在于网络上的同步请求见识导致哭对端进入假死状态。
+   更好的方式：发起异步请求
+request = prepare_the_request();
+send_request_asynchronously(request,function (response){
+    display(reponse);
+});
+传递了一个函数作为参数给send_request_asynchronously函数，他讲在收到响应时被调用。
+
+@模块（Module）
+   我们可以使用函数和闭包来构造模块，模块是一个提供接口却隐藏状态与实现的函数或对象。我们几乎可以完全摒弃全局变量的使用。
+   模块模式的一般形式是：一个定义了私有变量和函数的函数；利用闭包创建可以访问私有变量核函数的特权函数；最后返回这个特权函数，或者把他们保存到一个可访问道德地方。
+
+@级联（Cascade）
+   对一些没有返回值的方法，如果我们让这些方法返回this而不是undefined，就可以启用级联。
+   在一个级联中，我们可以在单独一条的语句中一次调用同一个对象的很多方法。
+
+@套用（Curry）
+   套用允许我们将函数与传递给他的参数相结合去产生出一个新的函数。
+
+@记忆(Memoization)
+   函数可以用对象去记住先前操作的结果，从而能避免无谓的运算。这种优化被称为记忆。
+   计算Fibonacci数列：
+var fibonacci = function(n) {
+    return n<2 ? n:fibonacci(n-1) + fibonacci(n-2);
+};
+for (var i = 0;i<=10;i+=1) {
+    document.writeln('//' + i+':'+fibonacci(i));
+}
+
+//fibonacci函数被调用了453次，我们调用了11次，而它自身调用了442次去计算可能已被刚计算过的值。
+//我们在一个名为memo的数组里保存我们的存储结果，存储结果可以隐藏在闭包中。
+var fibonacci = function () {
+    var memo = [0,1];
+    var fib = function(n) {
+        var result = memo[n];
+        if (typeof result !== 'number') {
+            result = fib(n-1)+fib(n-1);
+            memo[n] = result;
+        }
+        return result;
+    };
+    return fib;
+}();
+//只被调用了29次，我们调用了11次，自身调用了18次。
+   把这种形式一般化。编写一个函数来帮助构造带记忆功能的函数。
+var memoizer = function (memo,fundamental) {
+    var shell = function (n) {
+        var result = memo[n];
+        if (typeof result !== 'number') {
+            result = fundamental(shell,n);
+            memo[n] = result;
+        }
+        return result;
+    };
+    return shell;
+};
+    使用memoizer来定义fibonacci函数，提供其初始的memo函数和fundametal函数。
+var fibonacci = memoizer([0,1],function(shell,n) {
+    return shell (n-1) + shell(n-2);
+});
+
+   产生一个可记忆的阶乘函数
+var factorial = memoizer([1,1],function(shell,n) {
+    return n*shell(n-1);
+});
