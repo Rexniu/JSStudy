@@ -1,0 +1,36 @@
+第6章  数组(Arrays)
+   数组是一段线性分配的内存，它通过整数去计算机便宜并访问其中的元素。JavaScript没有想这种数组一样的数据结构。反而，JavaScript提供了一种拥有一次额雷数组特性的对象。
+
+@数组字面量(Array Literals)
+   一个数组字面量是在一对方括号中保卫另个或多个用逗号分割的值的表达式。
+
+@长度(Length)
+   JavaScript数组的length属性时没有上界的，如果用大于或等于当前length的数字作为下表来保存一个元素，那么length将增大来容纳新元素，不会发生数组边界错误。
+   length属性的值是这个数组的最大整数属性名加上1，它不一定等于数组里的属性的个数
+:
+
+>>> var myArray = [];
+undefined
+>>> myArray.length
+0
+>>> myArray[10000]=true;
+true
+>>> myArray.length;
+10001
+
+@删除(Delete)
+   delete运算符可以用来从数组中移除元素。但是那样会在数组中遗留一个空洞。因为排在被删除元素之后的元素保留了它们最初的名字(下标)。
+   解决的方法是用splice方法，numbers.splice(2,1);第一个参数是数组中的一个序号，第二个参数是要删除的元素个数。
+
+@枚举(Enumeration)
+   JavaScript的数组其实就是对象，所以for in 语句可以用来遍历一个数组的所有属性。但for in 无法保证属性的顺序。  对应的for语句避免了这些问题。
+var i;
+for (i=0;i<myArray.length;i+=1) {
+    document.writeln(myArray[i]);
+}
+
+@混淆的地方(Confusion)
+
+
+
+
