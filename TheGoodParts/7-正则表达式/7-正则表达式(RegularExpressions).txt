@@ -1,0 +1,9 @@
+第7章 正则表达式(Regular Expressions)
+   JavaScript的许多特性都借鉴自其它语言。语法借鉴自Java，函数借鉴自Scheme，原型借鉴自Self，而JavaScript的正则表达式则借鉴自Perl。
+   JavaScript中，正则表达式必须写在一行中，正则表达式中的空白是至关重要的。
+
+
+
+
+
+
