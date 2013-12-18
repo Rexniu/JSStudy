@@ -1,0 +1,137 @@
+第8章 方法(Methods)
+
+@Array
+   array.concat(item...)
+concat方法返回一个新数组，它包含array的浅复制(shallow copy)并将1个
+或多个参数item附加在其后。如果参数item是一个数组，那么它的每个元素会被分别添加。
+
+var a = ['a','b','c'];
+var b = ['x','y','z'];
+var c = a.concat(b,true);
+>>> c;
+["a", "b", "c", "x", "y", "z", true]
+
+   array.join(separator)
+join方法把一个array构造成一个字符串。
+如果想把大量的片段组装成一个字符串，把这些片段放放到一个数组中并用join方法连接它们通常比用+元素运算符连接这些片段要快。
+
+var a = ['a','b','c'];
+a.push('d');
+var c = a.join('');
+>>> c
+"abcd"
+
+   array.pop()
+pop和push方法使数组array像堆栈(stack)一样工作。pop方法移除array中的最后一个元素并返回该元素。如果该array是空的，它会返回undefined。
+
+>>> var a = ['a','b','c'];
+undefined
+>>> var c = a.pop();
+undefined
+>>> c
+"c"
+>>> a
+["a", "b"]
+
+   array.push(item..)
+push方法将一个或多个参数item附加到一个数组的尾部，不想concat方法那样，它会修改该数组array，如果参数item是一个数组，它会将参数数组作为单个元素整个添加到数组中。它返回这个数组array的新长度值。
+var a = ['a','b','c'];
+var b = ['x','y','z'];
+var c = a.push(b,true);
+>>> a
+["a", "b", "c", ["x", "y", "z"], true]
+>>> c
+5
+
+   array.reverse()
+reverse方法反转array中的元素顺序。它返回当前的array：
+
+var a = ['a','b','c'];
+var b = a.reverse();
+>>> a
+["c", "b", "a"]
+>>> b
+["c", "b", "a"]
+
+   array.shift()
+shift方法移除数组array中的第一个元素并返回该元素。如果这个数组array是空的，它会返回undefined。shift通常比pip慢得多。
+
+var a = ['a','b','c'];
+var c = a.shift();
+>>> a
+["b", "c"]
+>>> c
+"a"
+
+   array.slice(start,end)
+slice方法对array中的一段做浅复制。第一个被复制的元素是array[stary]。它将以支付知道array[end]为止。end参数是可选的，并且默认是该数组的长度array.length。    注意slice和splice是两码事。
+
+>>> var a = ['a','b','c'];
+>>> var b = a.slice(0,1);
+>>> b;
+["a"]
+>>> var c = a.slice(1);
+>>> c;
+["b", "c"]
+>>> var d = a.slice(1,2);
+>>> d;
+["b"]
+
+   array.sort(comparefn)
+sort方法对array中的内容进行适当的排序。它不能正确地给一组数字排序：
+>>> var n = [4,8,15,16,23,42];
+undefined
+>>> n.sort();
+[15, 16, 23, 4, 42, 8]
+JavaScript的默认比较函数假定所有要别排序的元素都是字符串。
+>>> n.sort(function(a,b) {return a-b;});
+[4, 8, 15, 16, 23, 42]
+
+上面的函数将给数字排序，但它不能给字符串排序，如果想要给任何简单值数组排序，则必须做更多的工作。
+var m = ['aa','bb','a',4,8,15,16,23,42];
+m.sort(function (a,b) {
+    if (a === b) {
+        return 0;
+    }
+    if (typeof a === typeof b) {
+        return a<b?-1:1;
+    }
+    return typeof a < typeof b ? -1:1;
+});
+[4, 8, 15, 16, 23, 42, "a", "aa", "bb"]
+
+如果有一个更智能的比较函数，我们也可以给对象数组排序。    （？？？？SyntaxError: missing } after property list）
+var by = function(name) {
+    return function (o,p) {
+        var a,b;
+        if (typeof o === 'object' && typeof p === 'object' && o &&p) {
+            a = o[name];
+            b = p[name];
+            if (a === b) {
+                return 0;
+            }
+            if (typeof a === typeof b) {
+                return a < b ? -1 :1;
+            }
+            return typeof a < typeof b ? -1 : 1;
+        }  else {
+            throw {
+                name:'Error',
+                message:'Expected an object when sorting by ' + name;
+            };
+        }
+    };
+};
+
+var s = [
+    {first: 'Joe', last: 'Besser'},
+    {first: 'Moe', last: 'Howard'},
+    {first: 'Joe', last: 'DeRita'},
+    {first: 'Shemp', last: 'Howard'},
+    {first: 'Larry', last: 'Fine'},
+    {first: 'Curly', last: 'Howard'},
+];
+s.sort(by('first'));
+
+
+   array.splice(start,deleteCount,item...)
