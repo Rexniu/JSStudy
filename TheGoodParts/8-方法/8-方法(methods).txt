@@ -213,3 +213,28 @@ document.writeln(Math.PI.toString());
 
 
 @Object
+    object.hasOwnProperty(name)
+如果这个object包含了一个名为name的属性，那么hasOwnProperty方法返回true。
+
+@RegExp
+   regexp.exec(string)
+exec方法时使用正则表达式的最强的（和最慢）的方法。如果它成功地匹配了regexp和字符串string，它会返回一个数组。
+   regexp.test(string)
+test方法是使用正则表达式的最简单（和最快）的方法。如果该regexp匹配String，它会返回true，否则返回false。
+
+@String
+   string.charAt(pos)
+charAt犯法返回在string中pos位置处的字符串。如果pos小于0或大于等于字符串唱的string.length，它会返回空字符串。JavaScript没有字符类型。
+
+
+>>> var name = 'Curly';
+>>> var initial = name.charAt(0);
+>>> initial
+"C"
+
+   string.charCodeAt(pos)
+charCodeAt方法同charAt一样，只不过它返回的不是一个字符串，而是以整数形式表示的在string中的pos位置处的字符的字符码位。如果pos小于0或大于等于字符串的长度string.length，它返回NaN。
+   string.concat(string...)
+concat方法通过将其他的字符转连接在一起来构造一个新的字符串。经常用“+”
+   string.indexOf(searchString,position)
+
