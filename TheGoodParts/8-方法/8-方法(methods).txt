@@ -237,4 +237,36 @@ charCodeAt方法同charAt一样，只不过它返回的不是一个字符串，而是以整数形式表示的在
    string.concat(string...)
 concat方法通过将其他的字符转连接在一起来构造一个新的字符串。经常用“+”
    string.indexOf(searchString,position)
-
+indexOf方法在string内查找另一个字符串searchString。如果它被找到，则返回第一个匹配字符的位置。否则返回-1.
+   string.lastIndexOf(searchString,postion)
+lastIndeexOf方法和indexOf方法类似，只不过它是从该字符串的末尾开始查找而不是从开头。
+   string.localeCompar(that)
+比较两个字符串，如果string比that小，那么结果为负数，如果是相等的那么结果为0.
+   string.match(regexp)
+匹配一个字符串和一个正则表达式，依据g标识来决定如何进行匹配。如果没有g标识，那么调用string.match（regexp）的结果与调用regexp.exec(string)的结果相同。然而，如果regexp带有g标识，那么它返回一个包含出捕获分组之外的所有匹配数组。
+   string.replace(searchValue,replaceValue)
+replace方法对string进行查找和替换的操作，并返回一个新的字符串。
+如果searchValue是一个正则表达式并且带有g标志，那么它将替换所有匹配支出。如果它没有带g标志，那么它将替换第一个匹配之处。
+replaceValue可以是一个字符串或一个函数，如果replaceValue是一个字符串，字符￥拥有特别的含义。
+   string.search（regexp）
+search方法和indexOf方法类似，只是它接受一个正则表达式对象作为参数而不是一个字符串。如果找到匹配，它返回第一个匹配的首字符位置，如果没有找到匹配，则返回-1.
+   string.slice(start,end)
+slice方法复制string的一部分来构造一个新的字符串。如果start参数是负数，它将与string.length相加，end参数是可选的，并且它的默认值是string.length。如果end参数是负数，那么它将与string.length相加。end参数是一个比最末一个字符的位置值还大的数。？？？？？要想得到从位置p开始的n个字符，就用string.slice（p,p+n）。
+   string.split(separator,limit)
+split方法吧这个string分割成片段来创建一个字符串数组，可选参数limit可以限制被分割的片段数量。
+   string.substring(start,end)
+用法和slice一样，只是不能处理负数。
+   string.toLocaleLowerCase()
+返回一个新字符串，它使用本地换的规则把这个string中的所有字母转换为小写格式。（主要用在土耳其语上）
+   string.toLocaleUpperCase()
+返回一个新字符串，它使用本地换的规则把这个string中的所有字母转换为大写格式。
+   string.toLowerCase()
+返回一个新字符串，它把这个string中的所有字母转换为小写格式。
+   string.toUpperCase()
+返回一个新的字符串，这个string中的所有字母都被转化为大写格式。
+   String.fromCharCode(char...)
+String.fromCharCode函数从一串数字中返回一个字符串。
+>>> var a = String.fromCharCode(67,97,116);
+undefined
+>>> a
+"Cat"
