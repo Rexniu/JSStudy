@@ -1,0 +1,23 @@
+第5章 继承(Inheritance)
+
+
+在那些基于类的语言（比Java）中，继承（inheritance或extends）提供了两个有用的服务。首先，它是代码重用的一种形式。另一个好处是它包括了一套类型系统的规范。
+
+基于类的语言中，对象时类的实例，并且类可以从另一个类继承，JavaScript是一门基于原型的语言，这意味着对象直接从其他对象继承。
+
+@伪类
+当一个函数队形被创建时，Function构造器产生的函数对象会运行类似这样的一些代码：
+    	this.prototype = { constructor:this};
+新函数对象被赋予一个prototype属性，其值是包含一个constructor属性值为该新函数对象。该prototype对象时存放继承特征的地方。
+
+当采用构造器调用模式，即使用new前缀去调用一个函数时，这将修改函数执行的方式。
+ 如果new运算符是一个方法而不是一个运算符，它可能会向这样执行：
+
+Function.method('new',function() {
+    //创建一个新对象，它继承自构造器函数的原型对象。
+    var that = Object.beget(this.prototype);
+    //调用构造器函数，绑定 -this- 到新对象。
+    var other = this.apply(that,arguments);
+    //如果它的返回不是一个对象，就返回该新对象。
+    return (typeof other === 'object' && other) || that;
+});
