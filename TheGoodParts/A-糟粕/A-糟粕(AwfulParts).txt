@@ -1,0 +1,57 @@
+A.1 全局变量
+JavaScript所有糟糕特性之中最为糟糕的就是它对全局额变量的依赖性。全局变量在很小的程序中可能会带来方便，但随着程序变得越来越大，它们很快变得难以处理。
+
+A.2 作用域
+在所有其他类似C语言风格的语言里，一个代码块（扩在一对花括号中的一组语句）会创造一个作用域。代码块中声明的变量在其外部是不可见的。JavaScript采用了这样的块语法，但没有提供块级作用域：代码块中声明的变量在包含此代码块的函数的任何位置都是可见的。
+
+A.3 自动插入分号
+JavaScript有一个机制，它试图通过自动插入分号来修正有缺损的程序。千万不要依靠它，它可能会掩盖更为严重的错误。
+
+A.4保留字
+下面的单词在JavaScript里被保留：
+abstract boolean break byte case catch char class const continue
+debugger default delete do double else enum export extends false
+final finally float for function goto if implements import in 
+instanceof int interface long native new null package private protected public return short static super switch synchronized this throw throws transient true try typeof var volatile void while with
+这些单词中的大多数并没有在语言中使用，它们不能被用来命名变量或参数。
+
+A.5 Unicode （？？？？）
+当设计JavaScript的时候，Unicode预计最多会有65536个字符。而从那以后它的容量慢慢增长到了拥有1百万个字符。
+JavaScript的字符时16位的，那足够覆盖原有的65536个字符。剩下的百万字符中的每一个都可以用一对字符来表示。Unicode把一对字符视为一个单一的字符。而JavaScript认为一对字符是两个不同的字符。
+
+A.6 typeof
+typeof运算符返回一个用于识别其运算数类型的字符串。
+
+A.7 parseInt
+parseInt是一个将字符串转化为整数的函数。它在遇到非数字时停止解析，所以parseInt("16")与parseInt("16 tons")产生相同的结果。如果该函数会提醒我们出现了额外文本就好了，但它不会那么做。
+
+A.8 +
++运算符可以用于加法运算或字符串连接。它究竟会如何执行取决于其参数的类型。
+
+A.9 浮点数
+二进制的浮点数不能够正确地处理十进制的小数，因此0.1+0.2不等于0.3.这是JavaScript中最经常被报告的bug。并且它是遵循二进制浮点数算数标准(IEEE754)而有意导致的结果。
+
+A.10 NaN
+NaN是IEEE754 中定义的一个特殊的数量值，它表示不是一个数字，尽管下面的表达式返回的是true：
+    typeof NaN === 'number'   //true
+
+A.11  伪数组
+JavaScript没有真正的数组。这也不全是坏事。JavaScript的数组确实很容易使用。不必给它们设置维度。而且它们永远不会产生越界错误。但它们的性能相比真正的数组可能相当糟糕。
+
+A.12 假值
+JavaScript拥有令人惊讶的一大组假值：
+值	类型
+0	Number
+NaN	Number
+' '	String
+false	Boolean
+null	Object
+undefined Undefined
+这些值全部都等同于假，但它们是不可互换的。
+
+A.13  hasOwnProperty
+hasOwnProperty是一个方法，而不是一个运算符，所以在任何对象中，它可能会被一个不同的函数甚至一个非函数的值所替换。
+
+A.14 对象
+JavaScript的对象永远不会有真的空对象，因为它们可以从原型链中取得成员元素。
+
